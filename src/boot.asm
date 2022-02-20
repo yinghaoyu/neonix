@@ -69,7 +69,7 @@ read_disk:
         call .waits; 等待数据准备完毕
         call .reads; 读取一个扇区
         pop cx; 恢复 cx
-        loop .read
+        loop .read  ; loop按照ecx计数器循环，每次循环自动减1
 
     ret
 
