@@ -1,6 +1,7 @@
 %.bin: %.asm
 	nasm -f bin $< -o $@
 
+# 镜像大小16M,boot程序512B,loader程序从第2个扇区开始4*512=2KB
 master.img: boot.bin loader.bin
 	yes | bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat master.img
 	dd if=boot.bin of=master.img bs=512 count=1 conv=notrunc
