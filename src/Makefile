@@ -34,7 +34,10 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/io.o \
 	$(BUILD)/kernel/console.o \
+	$(BUILD)/kernel/printk.o \
+	$(BUILD)/kernel/assert.o \
 	$(BUILD)/lib/string.o \
+	$(BUILD)/lib/vsprintf.o \
 	
 	$(shell mkdir -p $(dir $@))
 	# 静态链接，%^表示所有依赖文件

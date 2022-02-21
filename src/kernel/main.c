@@ -1,19 +1,24 @@
-#include "../include/neoinx/neoinx.h"
-#include "../include/neoinx/types.h"
-#include "../include/neoinx/io.h"
-#include "../include/neoinx/string.h"
-#include "../include/neoinx/console.h"
+#include "../include/neonix/neonix.h"
+#include "../include/neonix/types.h"
+#include "../include/neonix/io.h"
+#include "../include/neonix/string.h"
+#include "../include/neonix/console.h"
+#include "../include/neonix/printk.h"
 
 char message[] = "hello world!\n";
-char o[] = "neoinx\n";
 
 void kernel_init()
 {
   console_init();
-  u32 count = 20;
-  while(count--)
+ // u32 count = 20;
+ // while(count--)
+ // {
+ //   console_write(message, sizeof(message)-1);
+ // }
+  int cnt = 30;
+  while(cnt--)
   {
-    console_write(message, sizeof(message)-1);
+    printk("hello neonix %#010x\n", cnt);
   }
   return;
 }

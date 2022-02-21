@@ -1,7 +1,7 @@
 #ifndef NEONIX_H
-#define NEOINX_H
+#define NEONIX_H
 
-#define ONIX_MAGIC 20220220
+#define NEONIX_MAGIC 20220220
 
 void kernel_init();  // 初始化内核
 

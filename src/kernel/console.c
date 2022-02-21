@@ -1,5 +1,5 @@
-#include "../include/neoinx/console.h"
-#include "../include/neoinx/io.h"
+#include "../include/neonix/console.h"
+#include "../include/neonix/io.h"
 
 #define CRT_ADDR_REG 0x3D4 // CRT(6845)索引寄存器
 #define CRT_DATA_REG 0x3D5 // CRT(6845)数据寄存器
@@ -95,7 +95,7 @@ void console_clear()
   set_screen();
 
   u16* ptr = (u16 *)MEM_BASE;
-  while(ptr < MEM_END)
+  while(ptr < (u16*)MEM_END)
   {
     *ptr++ = erase;  // 显存全部填空格
   }
