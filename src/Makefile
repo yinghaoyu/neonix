@@ -16,20 +16,26 @@ CFLAGS:=$(strip $(CFLAGS))
 DEBUG:= -g
 INCLUDE:=-I$(SRC)/include
 
+# 先匹配精确的,再匹配模糊的
 $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 	$(shell mkdir -p $(dir $@))
 	nasm -f bin $< -o $@
 
-$(BUILD)/kernel/%.o: $(SRC)/kernel/%.asm
+$(BUILD)/%.o: $(SRC)/%.asm
 	$(shell mkdir -p $(dir $@))
 	nasm -f elf32 $(DEBUG) $< -o $@
 
-$(BUILD)/kernel/%.o: $(SRC)/kernel/%.c
+$(BUILD)/%.o: $(SRC)/%.c
 	$(shell mkdir -p $(dir $@))
 	gcc $(CFLAGS) $(DEBUG) $(INCLUDE) -c $< -o $@ 
 
-$(BUILD)/kernel.bin: $(BUILD)/kernel/start.o \
-	$(BUILD)/kernel/main.o
+$(BUILD)/kernel.bin: \
+	$(BUILD)/kernel/start.o \
+	$(BUILD)/kernel/main.o \
+	$(BUILD)/kernel/io.o \
+	$(BUILD)/kernel/console.o \
+	$(BUILD)/lib/string.o \
+	
 	$(shell mkdir -p $(dir $@))
 	# 静态链接，%^表示所有依赖文件
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)

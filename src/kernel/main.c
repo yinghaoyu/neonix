@@ -1,14 +1,19 @@
 #include "../include/neoinx/neoinx.h"
+#include "../include/neoinx/types.h"
+#include "../include/neoinx/io.h"
+#include "../include/neoinx/string.h"
+#include "../include/neoinx/console.h"
 
-int magic = ONIX_MAGIC;
-char message[] = "hello neoinx!";  // .data
-char buff[1024];  // .bss
+char message[] = "hello world!\n";
+char o[] = "neoinx\n";
 
 void kernel_init()
 {
-  char* video = (char*) 0xb8000;  // 文本显示器地址
-  for(int i = 0; i < sizeof(message); ++i)
+  console_init();
+  u32 count = 20;
+  while(count--)
   {
-    video[i * 2] = message[i];
+    console_write(message, sizeof(message)-1);
   }
+  return;
 }

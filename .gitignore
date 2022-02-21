@@ -1,0 +1,7 @@
+*.img
+*.ini
+*.bin
+*.map
+*.o
+*.out
+*.lock

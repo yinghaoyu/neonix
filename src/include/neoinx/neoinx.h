@@ -1,4 +1,4 @@
-#ifndef NEOINX_H
+#ifndef NEONIX_H
 #define NEOINX_H
 
 #define ONIX_MAGIC 20220220
