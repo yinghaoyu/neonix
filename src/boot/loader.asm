@@ -193,8 +193,9 @@ read_disk:
             loop .readw
         ret
 
+; 定义Global Descriptor Table
 ; 段选择子
-code_selector equ (1 << 3)
+code_selector equ (1 << 3) ; 1 bit TI, 2 bits RPL, 13 bits index
 data_selector equ (2 << 3)
 
 memory_base equ 0  ; 内存开始的位置:基地址
@@ -206,7 +207,7 @@ gdt_ptr:
   dw (gdt_end - gdt_base) - 1
   dd gdt_base
 gdt_base:
-  dd 0, 0  ; NULL描述符
+  dd 0, 0  ; NULL描述符,双字(4字节)
 gdt_code:
   dw memory_limit & 0xffff  ; 段界限的0～15位
   dw memory_base & 0xffff  ; 基地址0～15位

@@ -51,7 +51,7 @@ inw:
   jmp $+2
 
 
-  leave  ; 恢复栈帧
+  leave  ; 恢复栈帧,即恢复ebp和esp
 
   ret
 

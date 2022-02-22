@@ -27,7 +27,7 @@ typedef struct selector_t
 {
     u8 RPL : 2;
     u8 TI : 1;
-    u16 index : 13;
+    u16 index : 13;  // 2^13 = 8192个,其中index为0的是NULL
 } selector_t;
 
 // 全局描述符表指针

@@ -21,4 +21,4 @@ task_switch:
     pop ebx
     pop ebp
 
-    ret
+    ret  ; ret后,%esp会给%eip,然后执行

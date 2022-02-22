@@ -25,4 +25,5 @@ void interrupt_init()
     idt_ptr.limit = sizeof(idt) - 1;
     BMB;
     asm volatile("lidt idt_ptr\n");
+    BMB;
 }

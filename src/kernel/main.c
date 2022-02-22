@@ -20,15 +20,14 @@ void kernel_init()
  // {
  //   console_write(message, sizeof(message)-1);
  // }
-  int cnt = 30;
-  while(cnt--)
-  {
-    printk("hello neonix %#010x\n", cnt);
-  }
-  BMB;
-  gdt_init();
+  //int cnt = 30;
+  //while(cnt--)
+  //{
+  //  printk("hello neonix %#010x\n", cnt);
+  //}
+  //gdt_init();
   interrupt_init();
-  task_init();
-  assert(3 > 5);
+  //task_init();
+  //assert(3 > 5);
   return;
 }

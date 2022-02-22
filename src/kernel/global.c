@@ -8,13 +8,15 @@ pointer_t gdt_ptr;          // 内核全局描述符表指针
 // 初始化内核全局描述符表
 void gdt_init()
 {
-    DEBUGK("init gdt!!!\n");
+  //BMB;
+  DEBUGK("init gdt!\n");
 
-    asm volatile("sgdt gdt_ptr");
+  asm volatile("sgdt gdt_ptr");  // 将gdt从loader里读出至gdt_ptr
 
-    memcpy(&gdt, (void *)gdt_ptr.base, gdt_ptr.limit + 1);
+  memcpy(&gdt, (void *)gdt_ptr.base, gdt_ptr.limit + 1);
 
-    gdt_ptr.base = (u32)&gdt;
-    gdt_ptr.limit = sizeof(gdt) - 1;
-    asm volatile("lgdt gdt_ptr\n");
+  gdt_ptr.base = (u32)&gdt;
+  gdt_ptr.limit = sizeof(gdt) - 1;  // gdt由原来的3个变成128个
+  asm volatile("lgdt gdt_ptr\n");
+  //BMB;
 }
