@@ -1,10 +1,22 @@
-# A tiny os based on x86_32
+# Neonix is a tiny os based on x86_32.
 
-```
+Require:
+  gcc 11.2.0 maybe lower
+  nasm 2.15.05 maybe lower
+  bochs 2.7.1 (for debug)
+
+Tested on:
+  Archlinux 5.16.10-arch1-1 and above
+
+Debug required packages:
+  # Archlinux
+  $ sudo pacman -S lib32-gcc-libs
+
+To Debug, run:
+  make bochs
                         _      
  _ __   ___  ___  _ __ (_)_  __
 | '_ \ / _ \/ _ \| '_ \| \ \/ /
 | | | |  __/ (_) | | | | |>  < 
 |_| |_|\___|\___/|_| |_|_/_/\_\
                                
-```
