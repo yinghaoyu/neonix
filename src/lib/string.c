@@ -1,4 +1,4 @@
-#include "../include/neonix/string.h"
+#include <neonix/string.h>
 
 char *strcpy(char *dest, const char *src)
 {

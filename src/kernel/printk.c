@@ -1,6 +1,6 @@
-#include "../include/neonix/stdarg.h"
-#include "../include/neonix/stdio.h"
-#include "../include/neonix/console.h"
+#include <neonix/stdarg.h>
+#include <neonix/stdio.h>
+#include <neonix/console.h>
 
 static char buf[1024];
 

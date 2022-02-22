@@ -1,7 +1,7 @@
 #ifndef NEONIX_IO_H
 #define NEONIX_IO_H
 
-#include "types.h"
+#include <neonix/types.h>
 
 extern u8 inb(u16 port);
 extern u16 inw(u16 port);

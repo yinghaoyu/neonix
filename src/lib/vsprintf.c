@@ -3,9 +3,9 @@
  * Wirzenius wrote this portably, Torvalds fucked it up :-)
  */
 
-#include "../include/neonix/stdarg.h"
-#include "../include/neonix/string.h"
-#include "../include/neonix/assert.h"
+#include <neonix/stdarg.h>
+#include <neonix/string.h>
+#include <neonix/assert.h>
 
 #define ZEROPAD 1  // 填充零
 #define SIGN 2     // unsigned/signed long

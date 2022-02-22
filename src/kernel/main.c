@@ -1,9 +1,9 @@
-#include "../include/neonix/neonix.h"
-#include "../include/neonix/types.h"
-#include "../include/neonix/io.h"
-#include "../include/neonix/string.h"
-#include "../include/neonix/console.h"
-#include "../include/neonix/printk.h"
+#include <neonix/neonix.h>
+#include <neonix/types.h>
+#include <neonix/io.h>
+#include <neonix/string.h>
+#include <neonix/console.h>
+#include <neonix/printk.h>
 
 char message[] = "hello world!\n";
 

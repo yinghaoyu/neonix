@@ -1,7 +1,7 @@
 #ifndef NEONIX_STRING_H
 #define NEONIX_STRING_H
 
-#include "types.h"
+#include <neonix/types.h>
 
 char *strcpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);
