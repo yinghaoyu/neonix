@@ -7,6 +7,7 @@
 #include <neonix/global.h>
 #include <neonix/debug.h>
 #include <neonix/interrupt.h>
+#include <neonix/assert.h>
 
 char message[] = "hello world!\n";
 
@@ -26,5 +27,6 @@ void kernel_init()
   BMB;
   gdt_init();
   interrupt_init();
+  assert(3 > 5);
   return;
 }
