@@ -1,8 +1,8 @@
 # Neonix is a tiny os based on x86_32.
 
-Require:
-  gcc 11.2.0 maybe lower
-  nasm 2.15.05 maybe lower
+Requires:
+  gcc 11.2.0 and above
+  nasm 2.15.05 and above
   bochs 2.7.1 (for debug)
 
 Tested on:
