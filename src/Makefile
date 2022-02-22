@@ -41,6 +41,8 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/io.o \
 	$(BUILD)/kernel/printk.o \
+	$(BUILD)/kernel/schedule.o \
+	$(BUILD)/kernel/task.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	

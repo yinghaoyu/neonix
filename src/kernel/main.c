@@ -2,6 +2,7 @@
 #include <neonix/types.h>
 #include <neonix/io.h>
 #include <neonix/string.h>
+#include <neonix/task.h>
 #include <neonix/console.h>
 #include <neonix/printk.h>
 #include <neonix/global.h>
@@ -27,6 +28,7 @@ void kernel_init()
   BMB;
   gdt_init();
   interrupt_init();
+  task_init();
   assert(3 > 5);
   return;
 }
