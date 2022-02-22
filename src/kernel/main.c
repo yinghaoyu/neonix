@@ -4,6 +4,9 @@
 #include <neonix/string.h>
 #include <neonix/console.h>
 #include <neonix/printk.h>
+#include <neonix/global.h>
+#include <neonix/debug.h>
+#include <neonix/interrupt.h>
 
 char message[] = "hello world!\n";
 
@@ -20,5 +23,8 @@ void kernel_init()
   {
     printk("hello neonix %#010x\n", cnt);
   }
+  BMB;
+  gdt_init();
+  interrupt_init();
   return;
 }

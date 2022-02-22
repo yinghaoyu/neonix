@@ -17,6 +17,7 @@ DEBUG:= -g
 INCLUDE:=-I$(SRC)/include
 
 # 先匹配精确的,再匹配模糊的
+# 静态链接，$^表示所有依赖文件
 $(BUILD)/boot/%.bin: $(SRC)/boot/%.asm
 	$(shell mkdir -p $(dir $@))
 	nasm -f bin $< -o $@
@@ -32,15 +33,18 @@ $(BUILD)/%.o: $(SRC)/%.c
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/main.o \
-	$(BUILD)/kernel/io.o \
-	$(BUILD)/kernel/console.o \
-	$(BUILD)/kernel/printk.o \
 	$(BUILD)/kernel/assert.o \
+	$(BUILD)/kernel/debug.o \
+	$(BUILD)/kernel/console.o \
+	$(BUILD)/kernel/global.o \
+	$(BUILD)/kernel/handler.o \
+	$(BUILD)/kernel/interrupt.o \
+	$(BUILD)/kernel/io.o \
+	$(BUILD)/kernel/printk.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	
 	$(shell mkdir -p $(dir $@))
-	# 静态链接，%^表示所有依赖文件
 	ld -m elf_i386 -static $^ -o $@ -Ttext $(ENTRYPOINT)
 
 $(BUILD)/system.bin: $(BUILD)/kernel.bin
