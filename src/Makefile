@@ -43,6 +43,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/printk.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/task.o \
+	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
 	

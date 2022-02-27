@@ -9,17 +9,13 @@
 #include <neonix/debug.h>
 #include <neonix/interrupt.h>
 #include <neonix/assert.h>
+#include <neonix/stdlib.h>
 
 char message[] = "hello world!\n";
 
 void kernel_init()
 {
   console_init();
- // u32 count = 20;
- // while(count--)
- // {
- //   console_write(message, sizeof(message)-1);
- // }
   //int cnt = 30;
   //while(cnt--)
   //{
@@ -29,5 +25,16 @@ void kernel_init()
   interrupt_init();
   //task_init();
   //assert(3 > 5);
+  asm volatile(
+      "sti\n"
+      "mov %eax, %eax\n");
+
+  u32 counter = 0;
+  while(true)
+  {
+    DEBUGK("looping in kernel_init %d...\n", counter++);
+    delay(100000000);
+  }
+
   return;
 }
