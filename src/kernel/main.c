@@ -25,7 +25,7 @@ void kernel_init()
   //{
   //  printk("hello neonix %#010x\n", cnt);
   //}
-  //gdt_init();
+  gdt_init();
   interrupt_init();
   //task_init();
   //assert(3 > 5);
