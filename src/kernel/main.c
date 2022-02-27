@@ -27,7 +27,7 @@ void kernel_init()
   //assert(3 > 5);
   asm volatile(
       "sti\n"
-      "mov %eax, %eax\n");
+      "movl %eax, %eax\n");
 
   u32 counter = 0;
   while(true)
