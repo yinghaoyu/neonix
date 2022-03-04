@@ -86,3 +86,19 @@ clean:
 .PHONY: bochs
 bochs: $(BUILD)/master.img
 	bochs -q -f ../bochs/bochsrc
+
+.PHONY: qemu
+qemu: $(BUILD)/master.img
+	qemu-system-i386 \
+		-m 32M \
+		-boot c \
+		-hda $<
+
+# -s表示监听1234端口,-S表示gdb在没有连接之前不执行
+.PHONY: qemug
+qemug: $(BUILD)/master.img
+	qemu-system-i386 \
+		-s -S \
+		-m 32M \
+		-boot c \
+		-hda $<
