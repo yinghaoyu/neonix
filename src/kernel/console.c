@@ -117,7 +117,7 @@ static void scroll_up()
   }
   else
   {
-    memcpy((void *)MEM_BASE, (void *)screen, SCR_SIZE);  // 重新定位
+    memcpy((void *)MEM_BASE, (void *)(screen + ROW_SIZE), SCR_SIZE);  // 重新定位
     pos -= (screen - MEM_BASE);
     screen = MEM_BASE;
   }
