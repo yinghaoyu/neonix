@@ -4,7 +4,12 @@ Requires:
   gcc 11.2.0 and above
   nasm 2.15.05 and above
   bochs 2.7.1 (for debug)
-
+  qemu 6.2.0 (for debug)
+  # Archlinux
+  $ sudo pacman -S nasm
+  $ sudo pacman -S bochs
+  $ sudo pacman -S qemu
+  $ sudo pacman -S qemu-arch-extra
 Tested on:
   Archlinux 5.16.10-arch1-1 and above
 
