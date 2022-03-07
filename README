@@ -5,7 +5,7 @@ Requires:
   nasm 2.15.05 and above
   bochs 2.7.1 (for debug)
   qemu 6.2.0 (for debug)
-  gdb 11.2(for debug)
+  gdb 11.2 (for debug)
   # Archlinux
   $ sudo pacman -S nasm gcc gdb bochs qemu qemu-arch-extra
 Tested on:
