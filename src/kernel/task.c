@@ -28,19 +28,23 @@ void schedule()
 
 u32 thread_a()
 {
+  asm volatile("sti\n");
+
   while (true)
   {
     printk("A");
-    schedule();
+    //schedule();
   }
 }
 
 u32 thread_b()
 {
+  asm volatile("sti\n");
+
   while (true)
   {
     printk("B");
-    schedule();
+    //schedule();
   }
 }
 

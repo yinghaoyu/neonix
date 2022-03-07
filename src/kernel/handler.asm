@@ -15,12 +15,36 @@ interrupt_handler_%1:
 %endmacro
 
 interrupt_entry:
-  mov eax, [esp]
+  ;mov eax, [esp]
+
+  ; 保存上文寄存器信息
+  push ds
+  push es
+  push fs
+  push gs
+  pusha ; eax, ecx, edx, ebx, esp, ebp, esi, edi依次压栈
+  
+  ; 找到前面push %1压入的中断向量
+  mov eax, [esp + 12 *4]
+
+  ; 向中断处理函数传递参数
+  push eax
 
   ; 调用中断处理函数, handler_table 中存储了中断处理函数指针
   call [handler_table + eax * 4]
 
-  ; 对应push %1, 调用结束恢复堆栈
+  ; 对应push eax, 调用结束恢复堆栈
+  add esp, 4
+
+  ; 恢复下文寄存器信息
+  popa
+  pop gs
+  pop fs
+  pop es
+  pop ds
+
+  ; 对应push %1
+  ; 对应error code或magic, 调用结束恢复堆栈
   add esp, 8
   iret
 
