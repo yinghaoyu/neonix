@@ -26,7 +26,7 @@ void schedule()
   task_switch(next);
 }
 
-u32 thread_a()
+u32 _ofp thread_a() // 省略函数的栈帧,减少切换开销,但是无法追溯函数调用栈
 {
   asm volatile("sti\n");
 
@@ -37,7 +37,7 @@ u32 thread_a()
   }
 }
 
-u32 thread_b()
+u32 _ofp thread_b()
 {
   asm volatile("sti\n");
 
