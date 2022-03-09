@@ -34,6 +34,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/assert.o \
+	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/debug.o \
 	$(BUILD)/kernel/console.o \
 	$(BUILD)/kernel/global.o \
@@ -43,6 +44,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/printk.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/task.o \
+	$(BUILD)/kernel/time.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/vsprintf.o \
@@ -92,7 +94,9 @@ qemu: $(BUILD)/master.img
 	qemu-system-i386 \
 		-m 32M \
 		-boot c \
-		-hda $<
+		-drive file=$<,if=ide,index=0,media=disk,format=raw \
+		-audiodev pa,id=hda \
+		-machine pcspk-audiodev=hda \
 
 # -s表示监听1234端口,-S表示gdb在没有连接之前不执行
 .PHONY: qemug
@@ -101,4 +105,6 @@ qemug: $(BUILD)/master.img
 		-s -S \
 		-m 32M \
 		-boot c \
-		-hda $<
+		-drive file=$<,index=0,media=disk,format=raw \
+		-audiodev pa,id=hda \
+		-machine pcspk-audiodev=hda \

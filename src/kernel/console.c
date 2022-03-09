@@ -162,57 +162,59 @@ static void command_lf()
   }
 }
 
+extern void start_beep();
+
 void console_write(char *buf, u32 count)
 {
-    char ch;
-    while (count--)
+  char ch;
+  while (count--)
+  {
+    ch = *buf++;
+    switch (ch)
     {
-        ch = *buf++;
-        switch (ch)
+      case ASCII_NUL:
+        break;
+      case ASCII_BEL:
+        start_beep();
+        break;
+      case ASCII_BS:
+        command_bs();
+        break;
+      case ASCII_HT:
+        break;
+      case ASCII_LF:
+        command_lf();
+        command_cr();
+        break;
+      case ASCII_VT:
+        break;
+      case ASCII_FF:
+        command_lf();
+        break;
+      case ASCII_CR:
+        command_cr();
+        break;
+      case ASCII_DEL:
+        command_del();
+        break;
+      default:
+        if (x >= WIDTH)
         {
-        case ASCII_NUL:
-            break;
-        case ASCII_BEL:
-            // todo \a
-            break;
-        case ASCII_BS:
-            command_bs();
-            break;
-        case ASCII_HT:
-            break;
-        case ASCII_LF:
-            command_lf();
-            command_cr();
-            break;
-        case ASCII_VT:
-            break;
-        case ASCII_FF:
-            command_lf();
-            break;
-        case ASCII_CR:
-            command_cr();
-            break;
-        case ASCII_DEL:
-            command_del();
-            break;
-        default:
-            if (x >= WIDTH)
-            {
-                x -= WIDTH;
-                pos -= ROW_SIZE;
-                command_lf();
-            }
-
-            *((char *)pos) = ch;
-            pos++;
-            *((char *)pos) = attr;
-            pos++;
-
-            x++;
-            break;
+          x -= WIDTH;
+          pos -= ROW_SIZE;
+          command_lf();
         }
+
+        *((char *)pos) = ch;
+        pos++;
+        *((char *)pos) = attr;
+        pos++;
+
+        x++;
+        break;
     }
-    set_cursor();
+  }
+  set_cursor();
 }
 
 void console_init()
