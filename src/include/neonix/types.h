@@ -7,9 +7,11 @@
 
 #define EOS '\0'  // 字符串结尾 
 
+#ifndef __cplusplus  // 兼容c++, 否则以下宏定义会出错
 #define bool _Bool
 #define true 1
 #define false 0
+#endif
 
 // 用于取消结构体内存对齐
 #define _packed __attribute__((packed))

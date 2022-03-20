@@ -34,7 +34,7 @@ detect_memory:
   add di, cx
   
   ; 将结构体数量加1
-  inc word [ards_count]
+  inc dword [ards_count]
 
   cmp ebx, 0
   jnz .next
@@ -113,7 +113,11 @@ protect_mode:
   mov ecx, 10; 起始扇区
   mov bl, 200; 扇区数量
   
-  call read_disk
+  call read_disk; 读取内核
+
+  ; 此处为了兼容grub
+  mov eax, 0x20220220; 内核魔数
+  mov ebx, ards_count; ards 数量指针
 
   ;xchg bx, bx
 
@@ -230,6 +234,6 @@ gdt_end:
 
 ; buffer放后面是为了避免溢出
 ards_count:
-  dw 0
+  dd 0
 ards_buffer:
   
