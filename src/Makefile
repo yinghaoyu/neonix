@@ -42,6 +42,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/io.o \
 	$(BUILD)/kernel/printk.o \
+	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/task.o \
 	$(BUILD)/kernel/time.o \
