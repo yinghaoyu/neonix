@@ -166,6 +166,8 @@ extern void start_beep();
 
 void console_write(char *buf, u32 count)
 {
+  // 关中断过程如果时间过长，会导致丢失时间片，从而影响其他功能，比如任务调度就是时钟中断触发的
+  // bool intr = interrupt_disable(); // 禁止中断，防止多个任务出现竞态，导致终端输出不可预测
   char ch;
   while (count--)
   {
@@ -215,6 +217,8 @@ void console_write(char *buf, u32 count)
     }
   }
   set_cursor();
+  // 恢复中断
+  // set_interrupt_state(intr);
 }
 
 void console_init()
