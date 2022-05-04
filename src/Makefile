@@ -37,18 +37,24 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/debug.o \
 	$(BUILD)/kernel/console.o \
+	$(BUILD)/kernel/gate.o \
 	$(BUILD)/kernel/global.o \
 	$(BUILD)/kernel/handler.o \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/io.o \
 	$(BUILD)/kernel/memory.o \
+	$(BUILD)/kernel/mutex.o \
 	$(BUILD)/kernel/printk.o \
 	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/task.o \
+	$(BUILD)/kernel/thread.o \
 	$(BUILD)/kernel/time.o \
+	$(BUILD)/lib/bitmap.o \
+	$(BUILD)/lib/list.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \
+	$(BUILD)/lib/syscall.o \
 	$(BUILD)/lib/vsprintf.o \
 	
 	$(shell mkdir -p $(dir $@))
@@ -89,7 +95,11 @@ clean:
 
 .PHONY: bochs
 bochs: $(BUILD)/master.img
-	bochs -q -f ../bochs/bochsrc
+	bochs -q -f ../bochs/bochsrc -unlock
+
+.PHONY: bochsg
+bochsg: $(BUILD)/master.img
+	bochs-gdb -q -f ../bochs/bochsrc.gdb -unlock
 
 QEMU:= qemu-system-i386 \
 		-m 32M \
