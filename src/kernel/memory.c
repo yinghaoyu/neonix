@@ -177,11 +177,17 @@ u32 inline get_cr3()
   asm volatile("movl %cr3, %eax\n");
 }
 
+// 嵌入汇编语句的基本格式
+// asm("汇编语句"
+//    : 输出寄存器，即把寄存器的值输出到变量
+//    : 输入寄存器，即把变量的值输入到寄存器
+//    : 会被修改的寄存器，即过程中可能被修改的寄存器，为了方便gcc优化);
+
 // 设置 cr3 寄存器，参数是页目录的地址
 void set_cr3(u32 pde)
 {
   ASSERT_PAGE(pde);
-  asm volatile("movl %%eax, %%cr3\n" ::"a"(pde));
+  asm volatile("movl %%eax, %%cr3\n" ::"a"(pde)); // 这里没有输出寄存器
 }
 
 // 将 cr0 寄存器最高位 PG 置为 1，启用分页
