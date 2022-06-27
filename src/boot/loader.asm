@@ -16,10 +16,10 @@ detect_memory:
   mov ax, 0
   mov es, ax
   mov edi, ards_buffer
-  
+
   mov edx, 0x534d4150  ; 固定签名
 
-.next
+.next:
   ; 子功能号
   mov eax, 0xe820
   ; ards 结构大小，20字节
@@ -121,7 +121,8 @@ protect_mode:
 
   ;xchg bx, bx
 
-  jmp dword code_selector:0x10000
+  ; boot loader 跳过multiboot2头
+  jmp dword code_selector:0x10040
 
   ud2  ; 表示出错
 
