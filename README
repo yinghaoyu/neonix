@@ -8,7 +8,7 @@ Requires:
   gdb 11.2 (for debug)
 
   # Archlinux
-  $ sudo pacman -S nasm gcc gdb bochs qemu qemu-arch-extra
+  $ sudo pacman -S nasm gcc gdb bochs qemu qemu-arch-extra libisoburn mtools
 
 Tested on:
   Archlinux 5.16.10-arch1-1 and above
