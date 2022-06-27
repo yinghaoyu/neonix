@@ -1,12 +1,12 @@
-#include <neonix/neonix.h>
-#include <neonix/mutex.h>
-#include <neonix/task.h>
-#include <neonix/interrupt.h>
 #include <neonix/assert.h>
+#include <neonix/interrupt.h>
+#include <neonix/mutex.h>
+#include <neonix/neonix.h>
+#include <neonix/task.h>
 
 void mutex_init(mutex_t *mutex)
 {
-  mutex->value = false; // 初始化时没有被人持有
+  mutex->value = false;  // 初始化时没有被人持有
   list_init(&mutex->waiters);
 }
 
@@ -62,8 +62,7 @@ void mutex_unlock(mutex_t *mutex)
   set_interrupt_state(intr);
 }
 
-// 自旋锁初始化
-void spin_init(spinlock_t *lock)
+void lock_init(lock_t *lock)
 {
   lock->holder = NULL;
   lock->repeat = 0;
@@ -71,7 +70,7 @@ void spin_init(spinlock_t *lock)
 }
 
 // 尝试持有锁
-void spin_lock(spinlock_t *lock)
+void lock_acquire(lock_t *lock)
 {
   task_t *current = running_task();
   if (lock->holder != current)
@@ -88,7 +87,7 @@ void spin_lock(spinlock_t *lock)
 }
 
 // 释放锁
-void spin_unlock(spinlock_t *lock)
+void lock_release(lock_t *lock)
 {
   task_t *current = running_task();
   assert(lock->holder == current);
