@@ -32,8 +32,12 @@ _start:
   push ebx; loader中的ards_count
   push eax; loader中的magic
 
-  call console_init; 控制台初始化
-  call gdt_init; 全局描述符初始化
+  call console_init ; 控制台初始化
+  
+  ; 通过boot loader进来，loader.asm 里早已加载过gdt
+  ; 这里重新加载是为了兼容grub，因为grub引导内核前的gdt和栈顶地址都是输属于grub的旧的信息，重新加载后才是内核需要的信息
+  ; 虽然对于boot loader重复做了加载gdt和修改栈顶，但是不影响
+  call gdt_init ; 全局描述符初始化
   lgdt [gdt_ptr]
 
   jmp dword code_selector:_next
