@@ -38,7 +38,7 @@ void init_thread()
     LOGK("init task %d....\n", counter++);
     lock_release(&lock);
     // mutex_unlock(&mutex);
-    //  sleep(500);
+    sleep(500);
   }
 }
 
@@ -50,10 +50,10 @@ void test_thread()
   while (true)
   {
     // mutex_lock(&mutex);
-    lock_acquire(&lock);
-    LOGK("test task %d....\n", counter++);
-    lock_release(&lock);
+    // lock_acquire(&lock);
+    // LOGK("test task %d....\n", counter++);
+    // lock_release(&lock);
     // mutex_unlock(&mutex);
-    //  sleep(709);
+    sleep(709);
   }
 }

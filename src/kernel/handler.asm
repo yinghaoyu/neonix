@@ -194,7 +194,7 @@ syscall_handler:
   ; 调用系统调用处理函数，syscall_table 中存储了系统调用处理函数的指针
   call [syscall_table + eax * 4]
 
-  xchg bx, bx
+  ; xchg bx, bx
   add esp, 12; 系统调用结束恢复栈
 
   ; 修改栈中 eax 寄存器，设置系统调用返回值

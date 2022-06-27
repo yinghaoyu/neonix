@@ -48,6 +48,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/handler.o \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/io.o \
+	$(BUILD)/kernel/keyboard.o \
 	$(BUILD)/kernel/memory.o \
 	$(BUILD)/kernel/mutex.o \
 	$(BUILD)/kernel/printk.o \
@@ -135,13 +136,13 @@ QEMU_DISK:=-boot c \
 QEMU_CDROM:=-boot d \
 		-drive file=$(BUILD)/kernel.iso,media=cdrom \
 
+# -s表示监听1234端口,-S表示gdb在没有连接之前不执行
 QEMU_DEBUG:= -s -S
 
 .PHONY: qemu
 qemu: $(BUILD)/master.img
 	$(QEMU) $(QEMU_DISK)
 
-# -s表示监听1234端口,-S表示gdb在没有连接之前不执行
 .PHONY: qemug
 qemug: $(BUILD)/master.img
 	$(QEMU) $(QEMU_DISK) $(QEMU_DEBUG)
