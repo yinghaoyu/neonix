@@ -58,6 +58,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/thread.o \
 	$(BUILD)/kernel/time.o \
 	$(BUILD)/lib/bitmap.o \
+	$(BUILD)/lib/fifo.o \
 	$(BUILD)/lib/list.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \

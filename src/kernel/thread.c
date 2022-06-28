@@ -31,14 +31,20 @@ void init_thread()
   set_interrupt_state(true);
   u32 counter = 0;
 
+  char ch;
+
   while (true)
   {
+    bool intr = interrupt_disable();
+    keyboard_read(&ch, 1);
+    printk("%c", ch);
+    set_interrupt_state(intr);
     // mutex_lock(&mutex);
-    lock_acquire(&lock);
-    LOGK("init task %d....\n", counter++);
-    lock_release(&lock);
+    // lock_acquire(&lock);
+    // LOGK("init task %d....\n", counter++);
+    // lock_release(&lock);
     // mutex_unlock(&mutex);
-    sleep(500);
+    // sleep(500);
   }
 }
 
