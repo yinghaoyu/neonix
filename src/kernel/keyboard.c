@@ -367,9 +367,9 @@ void keyboard_handler(int vector)
     return;
   // LOGK("keydown %c \n", ch);
   fifo_put(&fifo, ch);
-  if (waiter != NULL)
+  if (waiter != NULL)  // 有等待输入的进程
   {
-    task_unblock(waiter);
+    task_unblock(waiter);  // 解除阻塞
     waiter = NULL;
   }
 }
