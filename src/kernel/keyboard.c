@@ -279,14 +279,17 @@ void keyboard_handler(int vector)
   send_eoi(vector);                        // 发送中断处理完成信号
   u16 scancode = inb(KEYBOARD_DATA_PORT);  // 从键盘读取按键信息扫描码
   u8 ext = 2;                              // keymap 状态索引，默认没有 shift 键
-  // 是扩展码字节
+  // 扩展码会连续读出两次扫描码
+  // 第一次是扩展码字节，比如小键盘的回车键按下
   if (scancode == 0xe0)
   {
     // 置扩展状态
     extcode_state = true;
+    // DEBUGK("extend scancode 0x%x\n", scancode);
     return;
   }
-  // 是扩展码
+  // DEBUGK("scancode 0x%x\n", scancode);
+  //  第二次读入的是扫描码
   if (extcode_state)
   {
     // 改状态索引
@@ -343,11 +346,10 @@ void keyboard_handler(int vector)
 
   // 计算 shift 状态
   bool shift = false;
-  if (capslock_state)
-    if (capslock_state && ('a' <= keymap[makecode][0] <= 'z'))
-    {
-      shift = !shift;
-    }
+  if (capslock_state && ('a' <= keymap[makecode][0] <= 'z'))
+  {
+    shift = !shift;
+  }
   if (shift_state)
   {
     shift = !shift;
@@ -357,7 +359,8 @@ void keyboard_handler(int vector)
   // [/?] 这个键比较特殊，只有这个键扩展码和普通码一样
   if (ext == 3 && (makecode != KEY_SLASH))
   {
-    ch = keymap[makecode][1];
+    // DEBUGK("scancode 0x%x\n", scancode);
+    ch = keymap[makecode][1];  // ? 号
   }
   else
   {
@@ -365,7 +368,6 @@ void keyboard_handler(int vector)
   }
   if (ch == INV)
     return;
-  // LOGK("keydown %c \n", ch);
   fifo_put(&fifo, ch);
   if (waiter != NULL)  // 有等待输入的进程
   {
