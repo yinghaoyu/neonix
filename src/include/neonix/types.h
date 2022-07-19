@@ -3,9 +3,9 @@
 
 #define EOF -1  // 文件结尾
 
-#define NULL ((void*)0)  // 空指针
+#define NULL ((void *) 0)  // 空指针
 
-#define EOS '\0'  // 字符串结尾 
+#define EOS '\0'  // 字符串结尾
 
 #ifndef __cplusplus  // 兼容c++, 否则以下宏定义会出错
 #define bool _Bool
@@ -36,5 +36,13 @@ typedef unsigned long long u64;
 
 typedef u32 time_t;
 typedef u32 idx_t;
+
+typedef int32 fd_t;
+typedef enum std_fd_t
+{
+  stdin,
+  stdout,
+  stderr,
+} std_fd_t;
 
 #endif

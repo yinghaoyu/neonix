@@ -60,6 +60,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/bitmap.o \
 	$(BUILD)/lib/fifo.o \
 	$(BUILD)/lib/list.o \
+	$(BUILD)/lib/printf.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/syscall.o \
