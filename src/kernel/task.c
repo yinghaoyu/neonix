@@ -1,25 +1,27 @@
-#include <neonix/neonix.h>
-#include <neonix/task.h>
-#include <neonix/printk.h>
-#include <neonix/debug.h>
-#include <neonix/memory.h>
 #include <neonix/assert.h>
-#include <neonix/interrupt.h>
-#include <neonix/string.h>
 #include <neonix/bitmap.h>
-#include <neonix/syscall.h>
+#include <neonix/debug.h>
+#include <neonix/global.h>
+#include <neonix/interrupt.h>
 #include <neonix/list.h>
+#include <neonix/memory.h>
+#include <neonix/neonix.h>
+#include <neonix/printk.h>
+#include <neonix/string.h>
+#include <neonix/syscall.h>
+#include <neonix/task.h>
 
 #define NR_TASKS 64
 
 extern u32 volatile jiffies;
 extern u32 jiffy;
 extern bitmap_t kernel_map;
+extern tss_t tss;
 extern void task_switch(task_t *next);
 
-static task_t *task_table[NR_TASKS]; // 任务表
-static list_t block_list;            // 任务默认阻塞链表
-static list_t sleep_list;            // 任务睡眠链表
+static task_t *task_table[NR_TASKS];  // 任务表
+static list_t block_list;             // 任务默认阻塞链表
+static list_t sleep_list;             // 任务睡眠链表
 
 static task_t *idle_task;
 
@@ -30,7 +32,7 @@ static task_t *get_free_task()
   {
     if (task_table[i] == NULL)
     {
-      task_table[i] = (task_t *)alloc_kpage(1); // todo free_kpage
+      task_table[i] = (task_t *) alloc_kpage(1);  // todo free_kpage
       return task_table[i];
     }
   }
@@ -112,10 +114,10 @@ void task_unblock(task_t *task)
 
 void task_sleep(u32 ms)
 {
-  assert(!get_interrupt_state()); // 不可中断
+  assert(!get_interrupt_state());  // 不可中断
 
-  u32 ticks = ms / jiffy;        // 需要睡眠的时间片
-  ticks = ticks > 0 ? ticks : 1; // 至少休眠一个时间片
+  u32 ticks = ms / jiffy;         // 需要睡眠的时间片
+  ticks = ticks > 0 ? ticks : 1;  // 至少休眠一个时间片
 
   // 记录目标全局时间片，在那个时刻需要唤醒任务
   task_t *current = running_task();
@@ -151,7 +153,7 @@ void task_sleep(u32 ms)
 
 void task_wakeup()
 {
-  assert(!get_interrupt_state()); // 不可中断
+  assert(!get_interrupt_state());  // 不可中断
 
   // 从睡眠链表中找到 ticks 小于等于 jiffies 的任务，恢复执行
   list_t *list = &sleep_list;
@@ -171,6 +173,17 @@ void task_wakeup()
   }
 }
 
+// 激活任务
+void task_activate(task_t *task)
+{
+  assert(task->magic == NEONIX_MAGIC);
+
+  if (task->uid != KERNEL_USER)
+  {
+    tss.esp0 = (u32) task + PAGE_SIZE;
+  }
+}
+
 task_t *running_task()
 {
   asm volatile(
@@ -180,7 +193,7 @@ task_t *running_task()
 
 void schedule()
 {
-  assert(!get_interrupt_state()); // 不可中断
+  assert(!get_interrupt_state());  // 不可中断
 
   task_t *current = running_task();
   task_t *next = task_search(TASK_READY);
@@ -201,7 +214,7 @@ void schedule()
   next->state = TASK_RUNNING;
   if (next == current)
     return;
-
+  task_activate(next);
   task_switch(next);
 }
 
@@ -210,29 +223,70 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
   task_t *task = get_free_task();
   memset(task, 0, PAGE_SIZE);
 
-  u32 stack = (u32)task + PAGE_SIZE;
+  u32 stack = (u32) task + PAGE_SIZE;
 
   stack -= sizeof(task_frame_t);
-  task_frame_t *frame = (task_frame_t *)stack;
+  task_frame_t *frame = (task_frame_t *) stack;
   frame->ebx = 0x11111111;
   frame->esi = 0x22222222;
   frame->edi = 0x33333333;
   frame->ebp = 0x44444444;
-  frame->eip = (void *)target;
+  frame->eip = (void *) target;
 
-  strcpy((char *)task->name, name);
+  strcpy((char *) task->name, name);
 
-  task->stack = (u32 *)stack;
+  task->stack = (u32 *) stack;
   task->priority = priority;
   task->ticks = task->priority;
   task->jiffies = 0;
   task->state = TASK_READY;
   task->uid = uid;
   task->vmap = &kernel_map;
-  task->pde = KERNEL_PAGE_DIR; // page directory entry
+  task->pde = KERNEL_PAGE_DIR;  // page directory entry
   task->magic = NEONIX_MAGIC;
 
   return task;
+}
+
+// 调用该函数的地方不能有任何局部变量
+// 调用前栈顶需要准备足够的空间
+void task_to_user_mode(target_t target)
+{
+  task_t *task = running_task();
+
+  u32 addr = (u32) task + PAGE_SIZE;
+
+  addr -= sizeof(intr_frame_t);
+  intr_frame_t *iframe = (intr_frame_t *) (addr);
+
+  iframe->vector = 0x20;
+  iframe->edi = 1;
+  iframe->esi = 2;
+  iframe->ebp = 3;
+  iframe->esp_dummy = 4;
+  iframe->ebx = 5;
+  iframe->edx = 6;
+  iframe->ecx = 7;
+  iframe->eax = 8;
+
+  iframe->gs = 0;
+  iframe->ds = USER_DATA_SELECTOR;
+  iframe->es = USER_DATA_SELECTOR;
+  iframe->fs = USER_DATA_SELECTOR;
+  iframe->ss = USER_DATA_SELECTOR;
+  iframe->cs = USER_CODE_SELECTOR;
+
+  iframe->error = NEONIX_MAGIC;
+
+  u32 stack3 = alloc_kpage(1);  // todo replace to user stack
+
+  iframe->eip = (u32) target;
+  iframe->eflags = (0 << 12 | 0b10 | 1 << 9);
+  iframe->esp = stack3 + PAGE_SIZE;
+
+  asm volatile(
+      "movl %0, %%esp\n"
+      "jmp interrupt_exit\n" ::"m"(iframe));
 }
 
 static void task_setup()

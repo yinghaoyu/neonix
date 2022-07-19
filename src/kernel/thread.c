@@ -1,6 +1,8 @@
 #include <neonix/debug.h>
 #include <neonix/interrupt.h>
+#include <neonix/stdio.h>
 #include <neonix/syscall.h>
+#include <neonix/task.h>
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
@@ -21,31 +23,29 @@ void idle_thread()
 
 #include <neonix/mutex.h>
 
-// mutex_t mutex;
+mutex_t mutex;
 lock_t lock;
 
-void init_thread()
+void real_init_thread()
 {
   // mutex_init(&mutex);
-  lock_init(&lock);
-  set_interrupt_state(true);
+  // lock_init(&lock);
+  // set_interrupt_state(true);
   u32 counter = 0;
 
   char ch;
 
   while (true)
   {
-    bool intr = interrupt_disable();
-    keyboard_read(&ch, 1);
-    printk("%c", ch);
-    set_interrupt_state(intr);
-    // mutex_lock(&mutex);
-    // lock_acquire(&lock);
-    // LOGK("init task %d....\n", counter++);
-    // lock_release(&lock);
-    // mutex_unlock(&mutex);
-    // sleep(500);
+    sleep(100);
+    printf("task is in user mode %d\n", counter++);
   }
+}
+
+void init_thread()
+{
+  char temp[100];  // 保证栈顶有足够的空间
+  task_to_user_mode(real_init_thread);
 }
 
 void test_thread()
@@ -56,7 +56,7 @@ void test_thread()
   while (true)
   {
     // mutex_lock(&mutex);
-    // lock_acquire(&lock);
+    //  lock_acquire(&lock);
     // LOGK("test task %d....\n", counter++);
     // lock_release(&lock);
     // mutex_unlock(&mutex);
