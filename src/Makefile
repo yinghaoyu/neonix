@@ -128,7 +128,7 @@ bochsb: $(BUILD)/kernel.iso
 
 QEMU:= qemu-system-i386 \
 		-m 32M \
-		-audiodev pa,id=hda \
+		-audiodev alsa,id=hda \
 		-machine pcspk-audiodev=hda \
 		-rtc base=localtime \
 
