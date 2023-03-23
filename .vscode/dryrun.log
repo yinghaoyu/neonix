@@ -1,6 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/rain/neonix'
-make: Leaving directory '/home/rain/neonix'
- 
-make: *** No targets specified and no makefile found.  Stop.
-

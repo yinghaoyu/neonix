@@ -6,3 +6,5 @@
 *.out
 *.lock
 /build
+.vscode
+!.vscode/launch.json
