@@ -39,6 +39,7 @@ $(BUILD)/%.o: $(SRC)/%.c
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/main.o \
+	$(BUILD)/kernel/arena.o \
 	$(BUILD)/kernel/assert.o \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/debug.o \

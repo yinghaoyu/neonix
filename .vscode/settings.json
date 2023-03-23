@@ -6,6 +6,7 @@
     "syscall.h": "c",
     "bitmap.h": "c",
     "string.h": "c",
-    "neonix.h": "c"
+    "neonix.h": "c",
+    "arena.h": "c"
   }
 }

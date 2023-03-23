@@ -1,3 +1,4 @@
+#include <neonix/arena.h>
 #include <neonix/debug.h>
 #include <neonix/interrupt.h>
 #include <neonix/stdio.h>
@@ -26,7 +27,7 @@ void idle_thread()
 mutex_t mutex;
 lock_t lock;
 
-void real_init_thread()
+void user_init_thread()
 {
   // mutex_init(&mutex);
   // lock_init(&lock);
@@ -37,7 +38,7 @@ void real_init_thread()
 
   while (true)
   {
-    sleep(100);
+    sleep(1000);
     printf("task is in user mode %d\n", counter++);
   }
 }
@@ -45,7 +46,7 @@ void real_init_thread()
 void init_thread()
 {
   char temp[100];  // 保证栈顶有足够的空间
-  task_to_user_mode(real_init_thread);
+  task_to_user_mode(user_init_thread);
 }
 
 void test_thread()
@@ -55,11 +56,19 @@ void test_thread()
 
   while (true)
   {
-    // mutex_lock(&mutex);
-    //  lock_acquire(&lock);
     // LOGK("test task %d....\n", counter++);
-    // lock_release(&lock);
-    // mutex_unlock(&mutex);
-    sleep(709);
+    void *ptr = kmalloc(1200);
+    LOGK("kmalloc 0x%p....\n", ptr);
+    kfree(ptr);
+
+    ptr = kmalloc(1024);
+    LOGK("kmalloc 0x%p....\n", ptr);
+    kfree(ptr);
+
+    ptr = kmalloc(54);
+    LOGK("kmalloc 0x%p....\n", ptr);
+    kfree(ptr);
+
+    sleep(5000);
   }
 }
