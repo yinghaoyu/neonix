@@ -38,8 +38,9 @@ void user_init_thread()
 
   while (true)
   {
+    test();
     sleep(1000);
-    printf("task is in user mode %d\n", counter++);
+    // printf("task is in user mode %d\n", counter++);
   }
 }
 
@@ -57,18 +58,6 @@ void test_thread()
   while (true)
   {
     // LOGK("test task %d....\n", counter++);
-    void *ptr = kmalloc(1200);
-    LOGK("kmalloc 0x%p....\n", ptr);
-    kfree(ptr);
-
-    ptr = kmalloc(1024);
-    LOGK("kmalloc 0x%p....\n", ptr);
-    kfree(ptr);
-
-    ptr = kmalloc(54);
-    LOGK("kmalloc 0x%p....\n", ptr);
-    kfree(ptr);
-
-    sleep(5000);
+    sleep(2000);
   }
 }
