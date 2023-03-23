@@ -6,4 +6,3 @@
 *.out
 *.lock
 /build
-/.vscode
