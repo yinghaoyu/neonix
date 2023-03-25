@@ -22,25 +22,23 @@ void idle_thread()
   }
 }
 
-#include <neonix/mutex.h>
-
-mutex_t mutex;
-lock_t lock;
+void test_recursion()
+{
+  char tmp[0x400];
+  test_recursion();
+}
 
 void user_init_thread()
 {
-  // mutex_init(&mutex);
-  // lock_init(&lock);
-  // set_interrupt_state(true);
   u32 counter = 0;
 
   char ch;
 
   while (true)
   {
-    test();
+    printf("task is in user mode %d\n", counter++);
+    test_recursion();
     sleep(1000);
-    // printf("task is in user mode %d\n", counter++);
   }
 }
 
@@ -57,7 +55,7 @@ void test_thread()
 
   while (true)
   {
-    // LOGK("test task %d....\n", counter++);
+    LOGK("test task %d....\n", counter++);
     sleep(2000);
   }
 }

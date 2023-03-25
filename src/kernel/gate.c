@@ -27,26 +27,6 @@ task_t *task = NULL;
 
 static u32 sys_test()
 {
-  // LOGK("syscall test...\n");
-  char *ptr;
-  BMB;
-  // 这里虚拟地址没有链接物理页，直接写会触发缺页异常，由CPU的MMU的硬件触发
-  // ptr = (char *) 0x1600000;
-  // ptr[3] = 'T';
-
-  // BMB;
-
-  link_page(0x1600000);
-
-  BMB;
-
-  ptr = (char *) 0x1600000;
-  ptr[3] = 'T';
-  BMB;
-
-  unlink_page(0x1600000);
-
-  BMB;
   return 255;
 }
 
