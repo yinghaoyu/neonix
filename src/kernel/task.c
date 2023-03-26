@@ -12,6 +12,8 @@
 #include <neonix/syscall.h>
 #include <neonix/task.h>
 
+#define LOGK(fmt, args...) DEBUGK(fmt, ##args)
+
 #define NR_TASKS 64
 
 extern u32 volatile jiffies;
@@ -250,6 +252,7 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
   task->uid = uid;
   task->vmap = &kernel_map;
   task->pde = KERNEL_PAGE_DIR;  // page directory entry
+  task->brk = KERNEL_MEMORY_SIZE;
   task->magic = NEONIX_MAGIC;
 
   return task;

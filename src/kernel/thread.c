@@ -32,13 +32,19 @@ void user_init_thread()
 {
   u32 counter = 0;
 
-  char ch;
-
   while (true)
   {
-    printf("task is in user mode %d\n", counter++);
-    test_recursion();
-    sleep(1000);
+    char *ptr = (char *) 0x900000;
+    brk(ptr);
+
+    BMB;
+    ptr -= 0x1000;
+    ptr[3] = 0xff;
+    BMB;
+    brk((char *) 0x800000);
+    BMB;
+    sleep(10000);
+    // printf("task is in user mode %d\n", counter++);
   }
 }
 
