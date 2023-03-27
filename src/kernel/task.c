@@ -328,6 +328,7 @@ static void task_build_stack(task_t *task)
   u32 addr = (u32) task + PAGE_SIZE;
   addr -= sizeof(intr_frame_t);
   intr_frame_t *iframe = (intr_frame_t *) addr;
+  // 子进程返回0
   iframe->eax = 0;
 
   addr -= sizeof(task_frame_t);
@@ -376,7 +377,7 @@ pid_t task_fork()
   // 构造 child 内核栈
   task_build_stack(child);  // ROP
   // schedule();
-
+  // 父进程返回子进程的pid
   return child->pid;
 }
 
@@ -406,9 +407,11 @@ void task_exit(int status)
     child->ppid = task->ppid;
   }
   LOGK("task 0x%p exit....\n", task);
+  // idle进程一定不会退出，因此默认调用exit的进程都有父进程号
   task_t *parent = task_table[task->ppid];
   if (parent->state == TASK_WAITING && (parent->waitpid == -1 || parent->waitpid == task->pid))
   {
+    // 如果是父进程先调用了waitpid，父进程会被阻塞，那么子进程退出时就要唤醒父进程
     task_unblock(parent);
   }
   schedule();
@@ -435,6 +438,7 @@ pid_t task_waitpid(pid_t pid, int32 *status)
 
       if (ptr->state == TASK_DIED)
       {
+        // 子进程调用exit结束，父进程调用waitpid，那么父进程就要回收子进程的资源
         child = ptr;
         task_table[i] = NULL;
         goto rollback;
@@ -444,6 +448,7 @@ pid_t task_waitpid(pid_t pid, int32 *status)
     }
     if (has_child)
     {
+      // 如果父进程先调用了waitpid，子进程还没有调用exit，父进程就进入等待
       task->waitpid = pid;
       task_block(task, NULL, TASK_WAITING);
       continue;
