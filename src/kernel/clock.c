@@ -1,8 +1,8 @@
-#include <neonix/neonix.h>
-#include <neonix/io.h>
-#include <neonix/interrupt.h>
 #include <neonix/assert.h>
 #include <neonix/debug.h>
+#include <neonix/interrupt.h>
+#include <neonix/io.h>
+#include <neonix/neonix.h>
 #include <neonix/task.h>
 
 #define PIT_CHAN0_REG 0X40
@@ -45,13 +45,13 @@ void stop_beep()
 void clock_handler(int vector)
 {
   assert(vector == 0x20);
-  send_eoi(vector); // 发送中断处理结束
+  send_eoi(vector);  // 发送中断处理结束
 
-  stop_beep();   // 检测并停止蜂鸣器
-  task_wakeup(); // 唤醒睡眠结束的任务
+  stop_beep();    // 检测并停止蜂鸣器
+  task_wakeup();  // 唤醒睡眠结束的任务
 
   jiffies++;
-  //DEBUGK("clock jiffies %d ...\n", jiffies);
+  // DEBUGK("clock jiffies %d ...\n", jiffies);
 
   task_t *task = running_task();
   assert(task->magic == NEONIX_MAGIC);
@@ -64,6 +64,13 @@ void clock_handler(int vector)
   }
 }
 
+extern u32 startup_time;
+
+time_t sys_time()
+{
+  return startup_time + (jiffies * JIFFY) / 1000;
+}
+
 void pit_init()
 {
   // 配置计数器 0 时钟
@@ -73,8 +80,8 @@ void pit_init()
 
   // 配置计数器 2 蜂鸣器
   outb(PIT_CTRL_REG, 0b10110110);
-  outb(PIT_CHAN2_REG, (u8)BEEP_COUNTER);
-  outb(PIT_CHAN2_REG, (u8)(BEEP_COUNTER >> 8));
+  outb(PIT_CHAN2_REG, (u8) BEEP_COUNTER);
+  outb(PIT_CHAN2_REG, (u8) (BEEP_COUNTER >> 8));
 }
 
 void clock_init()
