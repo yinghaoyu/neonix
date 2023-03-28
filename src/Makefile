@@ -82,6 +82,7 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 	$(BUILD)/boot/loader.bin \
 	$(BUILD)/system.bin \
 	$(BUILD)/system.map \
+	$(SRC)/utils/master.sfdisk \
 
 # 创建一个16M的硬盘镜像
 	yes | bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $@
@@ -97,6 +98,9 @@ $(BUILD)/master.img: $(BUILD)/boot/boot.bin \
 
 # 将system.bin写入硬盘
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc
+
+# 对硬盘进行分区
+	sfdisk $@ < $(SRC)/utils/master.sfdisk
 
 $(BUILD)/slave.img:
 # 创建一个 32M 的硬盘镜像
@@ -120,7 +124,7 @@ bochsg: $(IMAGES)
 
 QEMU:= qemu-system-i386 # 虚拟机
 QEMU+= -m 32M # 内存
-QEMU+= -audiodev pa,id=hda # 音频设备
+QEMU+= -audiodev alsa,id=hda # 音频设备
 QEMU+= -machine pcspk-audiodev=hda # pcspeaker 设备
 QEMU+= -rtc base=localtime # 设备本地时间
 QEMU+= -drive file=$(BUILD)/master.img,if=ide,index=0,media=disk,format=raw # 主硬盘
