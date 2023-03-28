@@ -507,6 +507,7 @@ static void ide_ctrl_init()
         disk->selector = IDE_LBA_MASTER;
       }
       ide_identify(disk, buf);
+	  ide_part_init(disk, buf);
     }
   }
   free_kpage((u32) buf, 1);
