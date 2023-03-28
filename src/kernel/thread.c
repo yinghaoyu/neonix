@@ -50,7 +50,6 @@ void test_thread()
 
   while (true)
   {
-    // printf("test thread %d %d %d...\n", getpid(), getppid(), counter++);
-    sleep(2000);
+    test();
   }
 }

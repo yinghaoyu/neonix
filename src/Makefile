@@ -41,6 +41,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/arena.o \
 	$(BUILD)/kernel/assert.o \
+	$(BUILD)/kernel/device.o \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/debug.o \
 	$(BUILD)/kernel/console.o \

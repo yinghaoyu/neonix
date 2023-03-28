@@ -34,6 +34,7 @@ typedef int int32;
 typedef long long int64;
 
 typedef int32 pid_t;
+typedef int32 dev_t;
 
 typedef unsigned char u8;
 typedef unsigned short u16;

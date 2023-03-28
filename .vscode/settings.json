@@ -9,6 +9,8 @@
     "neonix.h": "c",
     "arena.h": "c",
     "interrupt.h": "c",
-    "types.h": "c"
+    "types.h": "c",
+    "task.h": "c",
+    "device.h": "c"
   }
 }

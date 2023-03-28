@@ -1,4 +1,5 @@
 #include <neonix/console.h>
+#include <neonix/device.h>
 #include <neonix/io.h>
 #include <neonix/string.h>
 
@@ -164,7 +165,7 @@ static void command_lf()
 
 extern void start_beep();
 
-int32 console_write(char *buf, u32 count)
+int32 console_write(void *dev, char *buf, u32 count)
 {
   // 关中断过程如果时间过长，会导致丢失时间片，从而影响其他功能，比如任务调度就是时钟中断触发的
   bool intr = interrupt_disable();  // 禁止中断，防止多个任务出现竞态，导致终端输出不可预测
@@ -226,4 +227,6 @@ int32 console_write(char *buf, u32 count)
 void console_init()
 {
   console_clear();
+
+  device_install(DEV_CHAR, DEV_CONSOLE, NULL, "console", 0, NULL, NULL, console_write);
 }
