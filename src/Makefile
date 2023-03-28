@@ -47,6 +47,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/gate.o \
 	$(BUILD)/kernel/global.o \
 	$(BUILD)/kernel/handler.o \
+	$(BUILD)/kernel/ide.o \
 	$(BUILD)/kernel/interrupt.o \
 	$(BUILD)/kernel/io.o \
 	$(BUILD)/kernel/keyboard.o \

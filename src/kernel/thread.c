@@ -33,20 +33,7 @@ void user_init_thread()
   int status;
   while (true)
   {
-    pid_t pid = fork();
-
-    if (pid)
-    {
-      printf("fork after parent %d, %d, %d\n", pid, getpid(), getppid());
-      pid_t child = waitpid(pid, &status);
-      printf("wait pid %d status %d %d\n", child, status, time());
-    }
-    else
-    {
-      printf("fork after child %d, %d, %d\n", pid, getpid(), getppid());
-      sleep(1000);
-      exit(0);
-    }
+    sleep(1000);
   }
 }
 
