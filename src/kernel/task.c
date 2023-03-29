@@ -472,4 +472,5 @@ void task_init()
   task_create(test_thread, "test", 5, 1);
   task_create(test_thread, "test", 5, 5);
   task_create(test_thread, "test", 5, 3);
+  task_create(test_thread, "test", 5, KERNEL_USER);
 }

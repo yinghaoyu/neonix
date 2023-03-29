@@ -1,5 +1,5 @@
-#ifndef ONIX_IDE_H
-#define ONIX_IDE_H
+#ifndef NEONIX_IDE_H
+#define NEONIX_IDE_H
 
 #include <neonix/mutex.h>
 #include <neonix/types.h>
