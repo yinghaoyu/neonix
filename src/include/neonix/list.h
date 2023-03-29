@@ -3,21 +3,23 @@
 
 #include <neonix/types.h>
 
-#define element_offset(type, member) (u32)(&((type *)0)->member)  // 方便在各种数据结构嵌入链表，xv6也是这么做的
-#define element_entry(type, member, ptr) (type *)((u32)ptr - element_offset(type, member))
+#define element_offset(type, member) (u32)(&((type *) 0)->member)  // 方便在各种数据结构嵌入链表，xv6也是这么做的
+#define element_entry(type, member, ptr) (type *) ((u32) ptr - element_offset(type, member))
+#define element_node_offset(type, node, key) ((int) (&((type *) 0)->key) - (int) (&((type *) 0)->node))
+#define element_node_key(node, offset) *(int *) ((int) node + offset)
 
 // 链表结点
 typedef struct list_node_t
 {
-  struct list_node_t *prev; // 下一个结点
-  struct list_node_t *next; // 前一个结点
+  struct list_node_t *prev;  // 下一个结点
+  struct list_node_t *next;  // 前一个结点
 } list_node_t;
 
 // 链表
 typedef struct list_t
 {
-  list_node_t head; // 头结点
-  list_node_t tail; // 尾结点
+  list_node_t head;  // 头结点
+  list_node_t tail;  // 尾结点
 } list_t;
 
 // 初始化链表
@@ -52,5 +54,8 @@ bool list_empty(list_t *list);
 
 // 获得链表长度
 u32 list_size(list_t *list);
+
+// 链表插入排序
+void list_insert_sort(list_t *list, list_node_t *node, int offset);
 
 #endif
