@@ -27,12 +27,11 @@ void kernel_init()
   interrupt_init();
   clock_init();
   keyboard_init();
-  // time_init();
+  time_init();
   // rtc_init();
   ide_init();
   buffer_init();
   task_init();
   syscall_init();
   set_interrupt_state(true);
-  return;
 }

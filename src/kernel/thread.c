@@ -22,12 +22,6 @@ void idle_thread()
   }
 }
 
-void test_recursion()
-{
-  char tmp[0x400];
-  test_recursion();
-}
-
 void user_init_thread()
 {
   int status;
