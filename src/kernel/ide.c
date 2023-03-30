@@ -322,8 +322,6 @@ int ide_pio_write(ide_disk_t *disk, void *buf, u8 count, idx_t lba)
       ctrl->waiter = task;
       task_block(task, NULL, TASK_BLOCKED);
     }
-
-    LOGK("write sector wait 1s, pid %d\n", task->pid);
     ide_busy_wait(ctrl, IDE_SR_NULL);
   }
 
@@ -506,7 +504,7 @@ static void ide_ctrl_init()
         disk->selector = IDE_LBA_MASTER;
       }
       ide_identify(disk, buf);
-	  ide_part_init(disk, buf);
+      ide_part_init(disk, buf);
     }
   }
   free_kpage((u32) buf, 1);

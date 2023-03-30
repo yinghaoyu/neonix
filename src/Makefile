@@ -61,6 +61,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/task.o \
 	$(BUILD)/kernel/thread.o \
 	$(BUILD)/kernel/time.o \
+	$(BUILD)/fs/super.o \
 	$(BUILD)/lib/bitmap.o \
 	$(BUILD)/lib/fifo.o \
 	$(BUILD)/lib/list.o \
