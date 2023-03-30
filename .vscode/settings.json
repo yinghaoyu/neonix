@@ -11,6 +11,7 @@
     "interrupt.h": "c",
     "types.h": "c",
     "task.h": "c",
-    "device.h": "c"
+    "device.h": "c",
+    "io.h": "c"
   }
 }
