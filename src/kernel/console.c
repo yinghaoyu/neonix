@@ -2,6 +2,7 @@
 #include <neonix/device.h>
 #include <neonix/io.h>
 #include <neonix/string.h>
+#include <neonix/interrupt.h>
 
 #define CRT_ADDR_REG 0x3D4  // CRT(6845)索引寄存器
 #define CRT_DATA_REG 0x3D5  // CRT(6845)数据寄存器
