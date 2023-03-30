@@ -1,5 +1,6 @@
 #ifndef NEONIX_TYPES_H
 #define NEONIX_TYPES_H
+#include <neonix/neonix.h>
 
 #define EOF -1  // 文件结尾
 

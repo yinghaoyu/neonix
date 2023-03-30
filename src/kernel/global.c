@@ -17,10 +17,8 @@ void descriptor_init(descriptor_t *desc, u32 base, u32 limit)
 // 初始化内核全局描述符表
 void gdt_init()
 {
-  // BMB;
-  DEBUGK("init gdt!\n");
+  DEBUGK("init gdt!!!\n");
 
-  // asm volatile("sgdt gdt_ptr");  // 将gdt从loader里读出至gdt_ptr
   memset(gdt, 0, sizeof(gdt));
 
   descriptor_t *desc;
@@ -44,7 +42,6 @@ void gdt_init()
   desc->DPL = 0;          // 内核特权级
   desc->type = 0b0010;    // 数据 / 向上增长 / 可写 / 没有被访问过
 
-  // memcpy(&gdt, (void *)gdt_ptr.base, gdt_ptr.limit + 1);
 
   desc = gdt + USER_CODE_IDX;
   descriptor_init(desc, 0, 0xFFFFF);
@@ -68,7 +65,6 @@ void gdt_init()
 
   gdt_ptr.base = (u32) &gdt;
   gdt_ptr.limit = sizeof(gdt) - 1;  // gdt由原来的3个变成128个
-  // asm volatile("lgdt gdt_ptr\n");
 }
 
 void tss_init()
@@ -87,7 +83,5 @@ void tss_init()
   desc->present = 1;      // 在内存中
   desc->DPL = 0;          // 用于任务门或调用门
   desc->type = 0b1001;    // 32 位可用 tss
-
-  BMB;
   asm volatile("ltr %%ax\n" ::"a"(KERNEL_TSS_SELECTOR));
 }

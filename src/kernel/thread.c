@@ -22,7 +22,7 @@ void idle_thread()
   }
 }
 
-void user_init_thread()
+static void user_init_thread()
 {
   int status;
   while (true)

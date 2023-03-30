@@ -15,7 +15,6 @@ interrupt_handler_%1:
 %endmacro
 
 interrupt_entry:
-  ;mov eax, [esp]
 
   ; 保存上文寄存器信息
   push ds
