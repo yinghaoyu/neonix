@@ -158,7 +158,7 @@ void exception_handler(int vector,
   char *message = NULL;
   message = vector < 22 ? messages[vector] : messages[15];
 
-  printk("\nEXCEPTION : %s \n", messages[vector]);
+  printk("\nEXCEPTION : %s \n", message);
   printk("   VECTOR : 0x%02X\n", vector);
   printk("    ERROR : 0x%08X\n", error);
   printk("   EFLAGS : 0x%08X\n", eflags);
