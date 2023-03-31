@@ -12,6 +12,7 @@
     "types.h": "c",
     "task.h": "c",
     "device.h": "c",
-    "io.h": "c"
+    "io.h": "c",
+    "buffer.h": "c"
   }
 }
