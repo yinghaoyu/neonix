@@ -42,8 +42,9 @@ typedef struct task_t
   pid_t waitpid;             // 进程等待的 pid
   struct inode_t *ipwd;      // 进程当前目录 inode program work directory
   struct inode_t *iroot;     // 进程根目录 inode
-  u32 magic;                 // 内核魔数，用于检测栈溢出
   u16 umask;                // 进程用户权限
+  u32 magic;                 // 内核魔数，用于检测栈溢出
+
 } task_t;
 
 typedef struct task_frame_t
