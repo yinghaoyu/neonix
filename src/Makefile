@@ -58,6 +58,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/printk.o \
 	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
+	$(BUILD)/kernel/system.o \
 	$(BUILD)/kernel/task.o \
 	$(BUILD)/kernel/thread.o \
 	$(BUILD)/kernel/time.o \
