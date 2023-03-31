@@ -181,22 +181,26 @@ void bwrite(buffer_t *bf)
 void brelse(buffer_t *bf)
 {
   if (!bf)
-    return;
-  bf->count--;
-  assert(bf->count >= 0);
-  if (!bf->count)
   {
-    if (bf->rnode.next)
-    {
-      list_remove(&bf->rnode);
-    }
-
-    list_push(&free_list, &bf->rnode);
+    return;
   }
   if (bf->dirty)
   {
     bwrite(bf);  // todo need write?
   }
+
+  bf->count--;
+  assert(bf->count >= 0);
+  if (bf->count)
+  {
+    // 还有人用，直接返回
+    return;
+  }
+
+  assert(!bf->rnode.next);
+  assert(!bf->rnode.prev);
+  list_push(&free_list, &bf->rnode);
+
   if (!list_empty(&wait_list))
   {
     task_t *task = element_entry(task_t, node, list_popback(&wait_list));

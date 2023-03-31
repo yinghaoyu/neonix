@@ -99,7 +99,7 @@ static void mount_root()
   device_t *device = device_find(DEV_IDE_PART, 0);
   assert(device);
 
-  // 读更文件系统超级块
+  // 读根文件系统超级块
   root = read_super(device->dev);
 }
 
