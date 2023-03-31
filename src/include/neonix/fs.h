@@ -24,9 +24,9 @@
 #define INDIRECT2_BLOCK (INDIRECT1_BLOCK * INDIRECT1_BLOCK)             // 二级间接块数量
 #define TOTAL_BLOCK (DIRECT_BLOCK + INDIRECT1_BLOCK + INDIRECT2_BLOCK)  // 全部块数量
 
-#define SEPARATOR1 '/'                                       // 目录分隔符 1
-#define SEPARATOR2 '\\'                                      // 目录分隔符 2
-#define IS_SEPARATOR(c) (c == SEPARATOR1 || c == SEPARATOR2) // 字符是否位目录分隔符
+#define SEPARATOR1 '/'                                        // 目录分隔符 1
+#define SEPARATOR2 '\\'                                       // 目录分隔符 2
+#define IS_SEPARATOR(c) (c == SEPARATOR1 || c == SEPARATOR2)  // 字符是否位目录分隔符
 
 typedef struct inode_desc_t
 {
@@ -98,5 +98,8 @@ idx_t bmap(inode_t *inode, idx_t block, bool create);
 inode_t *get_root_inode();           // 获取根目录 inode
 inode_t *iget(dev_t dev, idx_t nr);  // 获得设备 dev 的 nr inode
 void iput(inode_t *inode);           // 释放 inode
+
+inode_t *named(char *pathname, char **next);  // 获取 pathname 对应的父目录 inode
+inode_t *namei(char *pathname);               // 获取 pathname 对应的 inode
 
 #endif
