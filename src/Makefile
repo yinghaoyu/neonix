@@ -64,6 +64,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/time.o \
 	$(BUILD)/fs/bmap.o \
 	$(BUILD)/fs/inode.o \
+	$(BUILD)/fs/namei.o \
 	$(BUILD)/fs/super.o \
 	$(BUILD)/lib/bitmap.o \
 	$(BUILD)/lib/fifo.o \
