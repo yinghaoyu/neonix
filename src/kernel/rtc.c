@@ -1,15 +1,15 @@
-#include <neonix/types.h>
+#include <neonix/assert.h>
 #include <neonix/debug.h>
 #include <neonix/interrupt.h>
 #include <neonix/io.h>
-#include <neonix/time.h>
-#include <neonix/assert.h>
 #include <neonix/stdlib.h>
+#include <neonix/time.h>
+#include <neonix/types.h>
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
-#define CMOS_ADDR 0x70 // CMOS 地址寄存器
-#define CMOS_DATA 0x71 // CMOS 数据寄存器
+#define CMOS_ADDR 0x70  // CMOS 地址寄存器
+#define CMOS_DATA 0x71  // CMOS 数据寄存器
 
 #define CMOS_SECOND 0x01
 #define CMOS_MINUTE 0x03
@@ -90,18 +90,18 @@ void set_alarm(u32 secs)
   cmos_write(CMOS_MINUTE, bin_to_bcd(time.tm_min));
   cmos_write(CMOS_SECOND, bin_to_bcd(time.tm_sec));
 
-  cmos_write(CMOS_B, 0b00100010); // 打开闹钟中断
-  cmos_read(CMOS_C);              // 读 C 寄存器，以允许 CMOS 中断
+  cmos_write(CMOS_B, 0b00100010);  // 打开闹钟中断
+  cmos_read(CMOS_C);               // 读 C 寄存器，以允许 CMOS 中断
 }
 
 void rtc_init()
 {
   // cmos_write(CMOS_B, 0b01000010); // 打开周期中断
-  
+
   // 设置中断频率
   //  outb(CMOS_A, (inb(CMOS_A) & 0xf) | 0b1110); // 0b1110对应中断时间片250ms
- 
+
   set_interrupt_handler(IRQ_RTC, rtc_handler);
   set_interrupt_mask(IRQ_RTC, true);
-  set_interrupt_mask(IRQ_CASCADE, true); // 打开外中断级联
+  set_interrupt_mask(IRQ_CASCADE, true);  // 打开外中断级联
 }

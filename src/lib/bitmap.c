@@ -1,6 +1,6 @@
+#include <neonix/assert.h>
 #include <neonix/bitmap.h>
 #include <neonix/string.h>
-#include <neonix/assert.h>
 
 // 构造位图
 void bitmap_make(bitmap_t *map, char *bits, u32 length, u32 offset)
@@ -68,10 +68,10 @@ void bitmap_set(bitmap_t *map, idx_t index, bool value)
 // 从位图中得到连续的 count 位
 int bitmap_scan(bitmap_t *map, u32 count)
 {
-  int start = EOF;                 // 标记目标开始的位置
-  u32 bits_left = map->length * 8; // 剩余的位数
-  u32 next_bit = 0;                // 下一个位
-  u32 counter = 0;                 // 计数器
+  int start = EOF;                  // 标记目标开始的位置
+  u32 bits_left = map->length * 8;  // 剩余的位数
+  u32 next_bit = 0;                 // 下一个位
+  u32 counter = 0;                  // 计数器
 
   // 从头开始找
   while (bits_left-- > 0)

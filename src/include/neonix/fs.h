@@ -13,10 +13,10 @@
 #define IMAP_NR 8  // inode 位图块，最大值
 #define ZMAP_NR 8  // 块位图块，最大值
 
-#define BLOCK_BITS (BLOCK_SIZE * 8)                      // 块位图大小
-#define BLOCK_INODES (BLOCK_SIZE / sizeof(inode_desc_t)) // 块 inode 数量
-#define BLOCK_DENTRIES (BLOCK_SIZE / sizeof(dentry_t))   // 块 dentry 数量
-#define BLOCK_INDEXES (BLOCK_SIZE / sizeof(u16))         // 块索引数量
+#define BLOCK_BITS (BLOCK_SIZE * 8)                       // 块位图大小
+#define BLOCK_INODES (BLOCK_SIZE / sizeof(inode_desc_t))  // 块 inode 数量
+#define BLOCK_DENTRIES (BLOCK_SIZE / sizeof(dentry_t))    // 块 dentry 数量
+#define BLOCK_INDEXES (BLOCK_SIZE / sizeof(u16))          // 块索引数量
 
 #define DIRECT_BLOCK (7)                                                // 直接块数量
 #define INDIRECT1_BLOCK BLOCK_INDEXES                                   // 一级间接块数量
@@ -109,5 +109,8 @@ int inode_read(inode_t *inode, char *buf, u32 len, off_t offset);
 
 // 从 inode 的 offset 处，将 buf 的 len 个字节写入磁盘
 int inode_write(inode_t *inode, char *buf, u32 len, off_t offset);
+
+// 释放 inode 所有文件块
+void inode_truncate(inode_t *inode);
 
 #endif

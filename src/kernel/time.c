@@ -1,45 +1,44 @@
-#include <neonix/time.h>
 #include <neonix/debug.h>
-#include <neonix/stdlib.h>
 #include <neonix/io.h>
 #include <neonix/rtc.h>
+#include <neonix/stdlib.h>
+#include <neonix/time.h>
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
-#define CMOS_ADDR 0x70 // CMOS 地址寄存器
-#define CMOS_DATA 0x71 // CMOS 数据寄存器
+#define CMOS_ADDR 0x70  // CMOS 地址寄存器
+#define CMOS_DATA 0x71  // CMOS 数据寄存器
 
 // 下面是 CMOS 信息的寄存器索引
-#define CMOS_SECOND 0x00  // (0 ~ 59)
-#define CMOS_MINUTE 0x02  // (0 ~ 59)
-#define CMOS_HOUR 0x04    // (0 ~ 23)
-#define CMOS_WEEKDAY 0x06 // (1 ~ 7) 星期天 = 1，星期六 = 7
-#define CMOS_DAY 0x07     // (1 ~ 31)
-#define CMOS_MONTH 0x08   // (1 ~ 12)
-#define CMOS_YEAR 0x09    // (0 ~ 99)
-#define CMOS_CENTURY 0x32 // 可能不存在
+#define CMOS_SECOND 0x00   // (0 ~ 59)
+#define CMOS_MINUTE 0x02   // (0 ~ 59)
+#define CMOS_HOUR 0x04     // (0 ~ 23)
+#define CMOS_WEEKDAY 0x06  // (1 ~ 7) 星期天 = 1，星期六 = 7
+#define CMOS_DAY 0x07      // (1 ~ 31)
+#define CMOS_MONTH 0x08    // (1 ~ 12)
+#define CMOS_YEAR 0x09     // (0 ~ 99)
+#define CMOS_CENTURY 0x32  // 可能不存在
 #define CMOS_NMI 0x80
 
-#define MINUTE 60          // 每分钟的秒数
-#define HOUR (60 * MINUTE) // 每小时的秒数
-#define DAY (24 * HOUR)    // 每天的秒数
-#define YEAR (365 * DAY)   // 每年的秒数，以 365 天算
+#define MINUTE 60           // 每分钟的秒数
+#define HOUR (60 * MINUTE)  // 每小时的秒数
+#define DAY (24 * HOUR)     // 每天的秒数
+#define YEAR (365 * DAY)    // 每年的秒数，以 365 天算
 
 // 每个月开始时的已经过去天数
-static int month[13] = {
-  0, // 这里占位，没有 0 月，从 1 月开始
-  0,
-  (31),
-  (31 + 29),
-  (31 + 29 + 31),
-  (31 + 29 + 31 + 30),
-  (31 + 29 + 31 + 30 + 31),
-  (31 + 29 + 31 + 30 + 31 + 30),
-  (31 + 29 + 31 + 30 + 31 + 30 + 31),
-  (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31),
-  (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30),
-  (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
-  (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30)};
+static int month[13] = {0,  // 这里占位，没有 0 月，从 1 月开始
+                        0,
+                        (31),
+                        (31 + 29),
+                        (31 + 29 + 31),
+                        (31 + 29 + 31 + 30),
+                        (31 + 29 + 31 + 30 + 31),
+                        (31 + 29 + 31 + 30 + 31 + 30),
+                        (31 + 29 + 31 + 30 + 31 + 30 + 31),
+                        (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31),
+                        (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30),
+                        (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
+                        (31 + 29 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30)};
 
 time_t startup_time;
 int century;
@@ -49,7 +48,7 @@ int century;
 time_t mktime(tm *time)
 {
   time_t res;
-  int year; // 1970 年开始的年数
+  int year;  // 1970 年开始的年数
   // 下面从 1900 年开始的年数计算
   if (time->tm_year >= 70)
     year = time->tm_year - 70;
@@ -86,8 +85,8 @@ time_t mktime(tm *time)
 
 int get_yday(tm *time)
 {
-  int res = month[time->tm_mon]; // 已经过去的月的天数
-  res += time->tm_mday;          // 这个月过去的天数
+  int res = month[time->tm_mon];  // 已经过去的月的天数
+  res += time->tm_mday;           // 这个月过去的天数
 
   int year;
   if (time->tm_year >= 70)
@@ -143,13 +142,6 @@ void time_init()
   tm time;
   time_read(&time);
   startup_time = mktime(&time);
-  LOGK("startup time: %d%d-%02d-%02d %02d:%02d:%02d\n",
-      century,
-      time.tm_year,
-      time.tm_mon,
-      time.tm_mday,
-      time.tm_hour,
-      time.tm_min,
-      time.tm_sec);
-  //hang();
+  LOGK("startup time: %d%d-%02d-%02d %02d:%02d:%02d\n", century, time.tm_year, time.tm_mon, time.tm_mday, time.tm_hour, time.tm_min, time.tm_sec);
+  // hang();
 }

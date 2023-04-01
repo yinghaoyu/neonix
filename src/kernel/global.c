@@ -42,7 +42,6 @@ void gdt_init()
   desc->DPL = 0;          // 内核特权级
   desc->type = 0b0010;    // 数据 / 向上增长 / 可写 / 没有被访问过
 
-
   desc = gdt + USER_CODE_IDX;
   descriptor_init(desc, 0, 0xFFFFF);
   desc->segment = 1;      // 代码段

@@ -1,8 +1,8 @@
 #include <neonix/assert.h>
-#include <neonix/stdarg.h>
-#include <neonix/types.h>
-#include <neonix/stdio.h>
 #include <neonix/printk.h>
+#include <neonix/stdarg.h>
+#include <neonix/stdio.h>
+#include <neonix/types.h>
 
 static u8 buf[1024];
 
