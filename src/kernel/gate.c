@@ -42,18 +42,9 @@ static u32 sys_test()
   return 255;
 }
 
+extern int sys_read();
+extern int sys_write();
 extern int32 console_write();
-
-int32 sys_write(fd_t fd, char *buf, u32 len)
-{
-  if (fd == stdout || fd == stderr)
-  {
-    return console_write(NULL, buf, len);
-  }
-  // todo
-  panic("write!!!!");
-  return 0;
-}
 
 extern fd_t sys_open();
 extern fd_t sys_creat();
@@ -81,6 +72,7 @@ void syscall_init()
   syscall_table[SYS_NR_GETPID] = sys_getpid;
   syscall_table[SYS_NR_GETPPID] = sys_getppid;
   syscall_table[SYS_NR_BRK] = sys_brk;
+  syscall_table[SYS_NR_READ] = sys_read;
   syscall_table[SYS_NR_WRITE] = sys_write;
   syscall_table[SYS_NR_MKDIR] = sys_mkdir;
   syscall_table[SYS_NR_RMDIR] = sys_rmdir;
