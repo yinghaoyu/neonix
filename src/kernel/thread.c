@@ -40,11 +40,9 @@ void init_thread()
 void test_thread()
 {
   set_interrupt_state(true);
-  link("/hello.txt", "/world.txt");
-  unlink("/hello.txt");
+  test();
   while (true)
   {
-    test();
     sleep(10);
   }
 }
