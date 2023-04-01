@@ -36,6 +36,7 @@ $(BUILD)/%.o: $(SRC)/%.c
 	$(shell mkdir -p $(dir $@))
 	gcc $(CFLAGS) $(DEBUG) $(INCLUDE) -c $< -o $@
 
+# 注意，这里的文件是有依赖关系的，builtin必须放在最后面链接
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/start.o \
 	$(BUILD)/kernel/main.o \
@@ -75,6 +76,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/syscall.o \
 	$(BUILD)/lib/vsprintf.o \
+	$(BUILD)/builtin/neosh.o \
 	
 	$(shell mkdir -p $(dir $@))
 	ld ${LDFLAGS} $^ -o $@

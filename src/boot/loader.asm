@@ -39,7 +39,7 @@ detect_memory:
   cmp ebx, 0
   jnz .next
 
-  mov si, deceting
+  mov si, detecting
   call print  ; 从实模式进入保护模式print函数就不能用了
 
   ;xchg bx, bx  ; breakpoint
@@ -83,8 +83,8 @@ print:
 loading:
   db "Loading Neonix...", 10, 13, 0; \n\r
 
-deceting:
-  db "Deceting Memory Success...", 10, 13, 0; \n\r
+detecting:
+  db "Detecting Memory Success...", 10, 13, 0; \n\r
 
 error:
   mov si, .msg

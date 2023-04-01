@@ -31,3 +31,21 @@ u32 div_round_up(u32 num, u32 size)
 {
   return (num + size - 1) / size;  // 向上取整
 }
+
+int atoi(const char *str)
+{
+  if (str == NULL)
+    return 0;
+  int sign = 1;
+  int result = 0;
+  if (*str == '-')
+  {
+    sign = -1;
+    str++;
+  }
+  for (; *str; str++)
+  {
+    result = result * 10 + (*str - '0');
+  }
+  return result * sign;
+}
