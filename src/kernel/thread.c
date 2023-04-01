@@ -1,5 +1,6 @@
 #include <neonix/arena.h>
 #include <neonix/debug.h>
+#include <neonix/fs.h>
 #include <neonix/interrupt.h>
 #include <neonix/stdio.h>
 #include <neonix/syscall.h>
@@ -24,6 +25,8 @@ void idle_thread()
 
 static void user_init_thread()
 {
+  fd_t fd = open("/world.txt", O_CREAT | O_RDWR, 0755);
+  close(fd);
   int status;
   while (true)
   {
