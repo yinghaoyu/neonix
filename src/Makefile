@@ -12,6 +12,7 @@ CFLAGS+= -fno-pie     # 不需要位置无关的可执行程序 position indepen
 CFLAGS+= -nostdlib     # 不需要标准库
 CFLAGS+= -fno-stack-protector # 不需要栈保护
 CFLAGS+= -DNEONIX # 定义 NEONIX
+CFLAGS+= -DNEONIX_DEBUG # 定义 NEONIX_DEBUG
 CFLAGS:=$(strip $(CFLAGS))  # 删除头尾不必要的空格和tab
 
 LDFLAGS:= -m elf_i386 \
@@ -110,6 +111,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/syscall.o \
 	$(BUILD)/lib/vsprintf.o \
+	$(BUILD)/builtin/neosh.o \
 	
 	$(shell mkdir -p $(dir $@))
 	ld ${LDFLAGS} $^ -o $@
