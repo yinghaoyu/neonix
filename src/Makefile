@@ -97,10 +97,12 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/thread.o \
 	$(BUILD)/kernel/timer.o \
 	$(BUILD)/kernel/time.o \
+	$(BUILD)/kernel/tty.o \
 	$(BUILD)/fs/bmap.o \
 	$(BUILD)/fs/dev.o \
 	$(BUILD)/fs/file.o \
 	$(BUILD)/fs/inode.o \
+	$(BUILD)/fs/ioctl.o \
 	$(BUILD)/fs/namei.o \
 	$(BUILD)/fs/pipe.o \
 	$(BUILD)/fs/stat.o \

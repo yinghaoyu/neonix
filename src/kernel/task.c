@@ -2,6 +2,7 @@
 #include <neonix/assert.h>
 #include <neonix/bitmap.h>
 #include <neonix/debug.h>
+#include <neonix/device.h>
 #include <neonix/errno.h>
 #include <neonix/fs.h>
 #include <neonix/global.h>
@@ -14,6 +15,7 @@
 #include <neonix/syscall.h>
 #include <neonix/task.h>
 #include <neonix/timer.h>
+#include <neonix/tty.h>
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
@@ -427,6 +429,14 @@ void task_exit(int status)
   if (task_leader(task))
   {
     // TODO: kill session
+  }
+
+  // 释放 TTY 设备
+  if (task_leader(task) && task->tty > 0)
+  {
+    device_t *device = device_get(task->tty);
+    tty_t *tty = (tty_t *) device->ptr;
+    tty->pgid = 0;
   }
 
   timer_remove(task);

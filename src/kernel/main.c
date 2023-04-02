@@ -13,6 +13,7 @@ extern void time_init();
 extern void rtc_init();
 extern void keyboard_init();
 extern void serial_init();
+extern void tty_init();
 extern void ide_init();
 extern void ramdisk_init();
 extern void task_init();
@@ -34,6 +35,7 @@ void kernel_init()
   clock_init();
   timer_init();
   keyboard_init();
+  tty_init();
   time_init();
   serial_init();
   // rtc_init();
