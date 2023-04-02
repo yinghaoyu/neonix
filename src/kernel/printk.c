@@ -1,4 +1,5 @@
 #include <neonix/console.h>
+#include <neonix/device.h>
 #include <neonix/stdarg.h>
 #include <neonix/stdio.h>
 
@@ -13,6 +14,7 @@ int printk(const char *fmt, ...)
   va_start(args, fmt);
   i = vsprintf(buf, fmt, args);
   va_end(args);
-  console_write(NULL, buf, i);
+  device_t *device = device_find(DEV_CONSOLE, 0);
+  device_write(device->dev, buf, i, 0, 0);
   return i;
 }
