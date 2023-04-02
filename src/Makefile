@@ -57,6 +57,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/memory.o \
 	$(BUILD)/kernel/mutex.o \
 	$(BUILD)/kernel/printk.o \
+	$(BUILD)/kernel/ramdisk.o \
 	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/system.o \
