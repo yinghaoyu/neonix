@@ -58,10 +58,6 @@ void builtin_logo()
 void builtin_test(int argc, char *argv[])
 {
   printf("osh test starting...\n");
-  while (true)
-  {
-    test();
-  }
 }
 
 void builtin_pwd()
