@@ -5,6 +5,7 @@
 #include <neonix/memory.h>
 #include <neonix/multiboot2.h>
 #include <neonix/neonix.h>
+#include <neonix/printk.h>
 #include <neonix/stdlib.h>
 #include <neonix/string.h>
 #include <neonix/syscall.h>
@@ -262,6 +263,7 @@ void mapping_init()
 
     page_entry_t *dentry = &pde[didx];
     entry_init(dentry, IDX((u32) pte));
+    dentry->user = 0;  // 只能被内核访问
 
     for (idx_t tidx = 0; tidx < 1024; tidx++, index++)
     {
@@ -271,6 +273,7 @@ void mapping_init()
 
       page_entry_t *tentry = &pte[tidx];
       entry_init(tentry, index);
+      tentry->user = 0;       // 只能被内核访问
       memory_map[index] = 1;  // 设置物理内存数组，该页被占用
     }
   }
@@ -670,7 +673,15 @@ void page_fault(u32 vector,
   page_error_code_t *code = (page_error_code_t *) &error;
   task_t *task = running_task();
 
-  assert(KERNEL_MEMORY_SIZE <= vaddr && vaddr < USER_STACK_TOP);
+  // assert(KERNEL_MEMORY_SIZE <= vaddr && vaddr < USER_STACK_TOP);
+
+  // 如果用户程序访问了不该访问的内存
+  if (vaddr < USER_EXEC_ADDR || vaddr >= USER_STACK_TOP)
+  {
+    assert(task->uid);
+    printk("Segmentation Fault!!!\n");
+    task_exit(-1);
+  }
 
   if (code->present)
   {
