@@ -36,6 +36,9 @@ $(BUILD)/%.o: $(SRC)/%.c
 	$(shell mkdir -p $(dir $@))
 	gcc $(CFLAGS) $(DEBUG) $(INCLUDE) -c $< -o $@
 
+$(BUILD)/builtin/%.out: $(BUILD)/builtin/%.o
+	ld -m elf_i386 -static $^ -o $@ -Ttext 0x1001000
+
 # 注意，这里的文件是有依赖关系的，builtin必须放在最后面链接
 $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/start.o \
@@ -46,6 +49,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/device.o \
 	$(BUILD)/kernel/debug.o \
+	$(BUILD)/kernel/execve.o \
 	$(BUILD)/kernel/console.o \
 	$(BUILD)/kernel/gate.o \
 	$(BUILD)/kernel/global.o \
