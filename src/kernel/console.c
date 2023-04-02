@@ -109,7 +109,7 @@ static void scroll_up()
 {
   if (screen + SCR_SIZE + ROW_SIZE < MEM_END)  // 屏幕结束地址+新行大小 未超过显存结束地址
   {
-    u32 *ptr = (u32 *) (screen + SCR_SIZE);
+    u16 *ptr = (u16 *) (screen + SCR_SIZE);
     for (size_t i = 0; i < WIDTH; i++)
     {
       *ptr++ = erase;  // 新行补上空格
