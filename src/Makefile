@@ -62,6 +62,7 @@ BUILTIN_APPS := \
 	$(BUILD)/builtin/dup.out \
 	$(BUILD)/builtin/err.out \
 	$(BUILD)/builtin/count.out \
+	$(BUILD)/builtin/alarm.out \
 
 $(BUILD)/builtin/%.out: $(BUILD)/builtin/%.o \
 	$(BUILD)/lib/libc.o \
@@ -74,6 +75,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/main.o \
 	$(BUILD)/kernel/arena.o \
 	$(BUILD)/kernel/assert.o \
+	$(BUILD)/kernel/alarm.o \
 	$(BUILD)/kernel/buffer.o \
 	$(BUILD)/kernel/clock.o \
 	$(BUILD)/kernel/device.o \

@@ -29,7 +29,6 @@ void timer_put(timer_t *timer)
 
 void default_timeout(timer_t *timer)
 {
-  assert(timer->task->node.next);
   task_unblock(timer->task, -ETIME);
 }
 
