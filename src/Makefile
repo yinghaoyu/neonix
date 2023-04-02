@@ -11,6 +11,7 @@ CFLAGS+= -fno-pic     # 不需要无关的代码position independent code
 CFLAGS+= -fno-pie     # position independent executable
 CFLAGS+= -nostdlib     # 不需要标准库
 CFLAGS+= -fno-stack-protector # 不需要栈保护
+CFLAGS+= -DNEONIX # 定义 NEONIX
 CFLAGS:=$(strip $(CFLAGS))  # 删除头尾不必要的空格和tab
 
 LDFLAGS:= -m elf_i386 \
@@ -36,7 +37,20 @@ $(BUILD)/%.o: $(SRC)/%.c
 	$(shell mkdir -p $(dir $@))
 	gcc $(CFLAGS) $(DEBUG) $(INCLUDE) -c $< -o $@
 
-$(BUILD)/builtin/%.out: $(BUILD)/builtin/%.o
+$(BUILD)/lib/libc.o: $(BUILD)/lib/crt.o \
+	$(BUILD)/lib/crt1.o \
+	$(BUILD)/lib/string.o \
+	$(BUILD)/lib/vsprintf.o \
+	$(BUILD)/lib/stdlib.o \
+	$(BUILD)/lib/syscall.o \
+	$(BUILD)/lib/printf.o \
+	$(BUILD)/lib/assert.o \
+
+	ld -m elf_i386 -r $^ -o $@
+
+$(BUILD)/builtin/%.out: $(BUILD)/builtin/%.o \
+	$(BUILD)/lib/libc.o \
+	
 	ld -m elf_i386 -static $^ -o $@ -Ttext 0x1001000
 
 # 注意，这里的文件是有依赖关系的，builtin必须放在最后面链接
