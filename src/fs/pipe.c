@@ -1,6 +1,7 @@
 #include <neonix/assert.h>
 #include <neonix/debug.h>
 #include <neonix/device.h>
+#include <neonix/errno.h>
 #include <neonix/fifo.h>
 #include <neonix/fs.h>
 #include <neonix/stat.h>
@@ -22,12 +23,12 @@ int pipe_read(inode_t *inode, char *buf, int count)
     {
       assert(inode->rxwaiter == NULL);
       inode->rxwaiter = running_task();
-      task_block(inode->rxwaiter, NULL, TASK_BLOCKED);
+      task_block(inode->rxwaiter, NULL, TASK_BLOCKED, TIMELESS);
     }
     buf[nr++] = fifo_get(fifo);
     if (inode->txwaiter)
     {
-      task_unblock(inode->txwaiter);
+      task_unblock(inode->txwaiter, EOK);
       inode->txwaiter = NULL;
     }
   }
@@ -44,12 +45,12 @@ int pipe_write(inode_t *inode, char *buf, int count)
     {
       assert(inode->txwaiter == NULL);
       inode->txwaiter = running_task();
-      task_block(inode->txwaiter, NULL, TASK_BLOCKED);
+      task_block(inode->txwaiter, NULL, TASK_BLOCKED, TIMELESS);
     }
     fifo_put(fifo, buf[nr++]);
     if (inode->rxwaiter)
     {
-      task_unblock(inode->rxwaiter);
+      task_unblock(inode->rxwaiter, EOK);
       inode->rxwaiter = NULL;
     }
   }

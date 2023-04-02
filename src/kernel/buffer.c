@@ -2,6 +2,7 @@
 #include <neonix/buffer.h>
 #include <neonix/debug.h>
 #include <neonix/device.h>
+#include <neonix/errno.h>
 #include <neonix/memory.h>
 #include <neonix/string.h>
 #include <neonix/task.h>
@@ -126,7 +127,7 @@ static buffer_t *get_free_buffer()
       return bf;
     }
     // 等待某个缓冲释放
-    task_block(running_task(), &wait_list, TASK_BLOCKED);
+    task_block(running_task(), &wait_list, TASK_BLOCKED, TIMELESS);
   }
 }
 
@@ -213,7 +214,7 @@ void brelse(buffer_t *bf)
   if (!list_empty(&wait_list))
   {
     task_t *task = element_entry(task_t, node, list_popback(&wait_list));
-    task_unblock(task);
+    task_unblock(task, EOK);
   }
 }
 

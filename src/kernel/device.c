@@ -2,6 +2,7 @@
 #include <neonix/assert.h>
 #include <neonix/debug.h>
 #include <neonix/device.h>
+#include <neonix/errno.h>
 #include <neonix/neonix.h>
 #include <neonix/string.h>
 #include <neonix/task.h>
@@ -197,7 +198,7 @@ void device_request(dev_t dev, void *buf, u8 count, idx_t idx, int flags, u32 ty
   if (!empty)
   {
     req->task = running_task();
-    task_block(req->task, NULL, TASK_BLOCKED);
+    task_block(req->task, NULL, TASK_BLOCKED, TIMELESS);
   }
 
   do_request(req);
@@ -210,6 +211,6 @@ void device_request(dev_t dev, void *buf, u8 count, idx_t idx, int flags, u32 ty
   if (nextreq)
   {
     assert(nextreq->task->magic == NEONIX_MAGIC);
-    task_unblock(nextreq->task);
+    task_unblock(nextreq->task, EOK);
   }
 }

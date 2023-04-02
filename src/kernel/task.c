@@ -2,6 +2,7 @@
 #include <neonix/assert.h>
 #include <neonix/bitmap.h>
 #include <neonix/debug.h>
+#include <neonix/errno.h>
 #include <neonix/fs.h>
 #include <neonix/global.h>
 #include <neonix/interrupt.h>
@@ -118,8 +119,15 @@ void task_yield()
   schedule();
 }
 
+void task_timeout(task_t *task)
+{
+  bool intr = interrupt_disable();
+  task_unblock(task, -ETIME);
+  set_interrupt_state(intr);
+}
+
 // 任务阻塞
-void task_block(task_t *task, list_t *blist, task_state_t state)
+int task_block(task_t *task, list_t *blist, task_state_t state, int timeout_ms)
 {
   assert(!get_interrupt_state());
   assert(task->node.next == NULL);
@@ -144,7 +152,7 @@ void task_block(task_t *task, list_t *blist, task_state_t state)
 }
 
 // 解除任务阻塞
-void task_unblock(task_t *task)
+void task_unblock(task_t *task, int reason)
 {
   assert(!get_interrupt_state());
 
@@ -153,6 +161,7 @@ void task_unblock(task_t *task)
   assert(task->node.next == NULL);
   assert(task->node.prev == NULL);
 
+  task->status = reason;
   task->state = TASK_READY;
 }
 
@@ -194,7 +203,7 @@ void task_wakeup()
     ptr = ptr->next;
 
     task->ticks = 0;
-    task_unblock(task);
+    task_unblock(task, EOK);
   }
 }
 
@@ -480,7 +489,7 @@ void task_exit(int status)
   if (parent->state == TASK_WAITING && (parent->waitpid == -1 || parent->waitpid == task->pid))
   {
     // 如果是父进程先调用了waitpid，父进程会被阻塞，那么子进程退出时就要唤醒父进程
-    task_unblock(parent);
+    task_unblock(parent, EOK);
   }
   schedule();
 }
@@ -518,7 +527,7 @@ pid_t task_waitpid(pid_t pid, int32 *status)
     {
       // 如果父进程先调用了waitpid，子进程还没有调用exit，父进程就进入等待
       task->waitpid = pid;
-      task_block(task, NULL, TASK_WAITING);
+      task_block(task, NULL, TASK_WAITING, TIMELESS);
       continue;
     }
     break;

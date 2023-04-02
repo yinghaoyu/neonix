@@ -1,6 +1,7 @@
 #include <neonix/assert.h>
 #include <neonix/debug.h>
 #include <neonix/device.h>
+#include <neonix/errno.h>
 #include <neonix/fifo.h>
 #include <neonix/interrupt.h>
 #include <neonix/io.h>
@@ -372,7 +373,7 @@ void keyboard_handler(int vector)
   fifo_put(&fifo, ch);
   if (waiter != NULL)  // 有等待输入的进程
   {
-    task_unblock(waiter);  // 解除阻塞
+    task_unblock(waiter, EOK);
     waiter = NULL;
   }
 }
@@ -386,7 +387,7 @@ u32 keyboard_read(void *dev, char *buf, u32 count)
     while (fifo_empty(&fifo))
     {
       waiter = running_task();
-      task_block(waiter, NULL, TASK_BLOCKED);
+      task_block(waiter, NULL, TASK_WAITING, TIMELESS);
     }
     buf[nr++] = fifo_get(&fifo);
   }
