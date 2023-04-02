@@ -1,5 +1,6 @@
 #include <neonix/assert.h>
 #include <neonix/fs.h>
+#include <neonix/signal.h>
 #include <neonix/stat.h>
 #include <neonix/stdio.h>
 #include <neonix/stdlib.h>
@@ -31,6 +32,8 @@ static char *neonix_logo[] = {
     "\033[0m\t               \033[34m| | | | \033[32m __/ \033[35m(_) | \033[33m| | \033[32m| | \033[35m>  < \n\0",
     "\033[0m\t               \033[34m|_| |_|\033[32m\\___|\033[35m\\___/\033[33m|_| |_\033[32m|_|\033[35m/_/\\_\\\n\0",
 };
+
+static bool interrupt = false;
 
 extern char *strsep(const char *str);
 extern char *strrsep(const char *str);
@@ -305,6 +308,7 @@ pid_t builtin_command(char *filename, char *argv[], fd_t infd, fd_t outfd, fd_t 
     ioctl(STDIN_FILENO, TIOCSPGRP, getpid());
   }
 
+  signal(SIGINT, (int) SIG_DFL);
   int i = execve(filename, argv, envp);
   exit(i);
 }
@@ -533,8 +537,18 @@ static int cmd_parse(char *cmd, char *argv[])
   return argc;
 }
 
+static int signal_handler(int sig)
+{
+  // printf("pid %d signal %d happened\n", getpid(), sig);
+  signal(SIGINT, (int) signal_handler);
+  interrupt = true;
+}
+
 int main()
 {
+  // 注册信号 CTRL + C
+  signal(SIGINT, (int) signal_handler);
+
   // 新建会话
   setsid();
   // 设置 TTY 进程组为 neosh
@@ -550,6 +564,12 @@ int main()
   {
     print_prompt();
     readline(cmd, sizeof(cmd));
+    if (interrupt)
+    {
+      // 如果按下了 CTRL+c，则重新读取命令
+      interrupt = false;
+      continue;
+    }
     if (cmd[0] == 0)
     {
       continue;

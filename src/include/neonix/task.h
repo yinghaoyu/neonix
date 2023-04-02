@@ -2,6 +2,7 @@
 #define NEONIX_TASK_H
 
 #include <neonix/list.h>
+#include <neonix/signal.h>
 #include <neonix/types.h>
 
 #define KERNEL_USER 0
@@ -54,8 +55,10 @@ typedef struct task_t
   struct inode_t *iexec;               // 程序文件 inode
   u16 umask;                           // 进程用户权限
   struct file_t *files[TASK_FILE_NR];  // 进程文件表
+  u32 signal;                          // 进程信号位图
+  u32 blocked;                         // 进程信号屏蔽位图
+  sigaction_t actions[MAXSIG];         // 信号处理函数
   u32 magic;                           // 内核魔数，用于检测栈溢出
-
 } task_t;
 
 typedef struct task_frame_t
@@ -99,6 +102,7 @@ typedef struct intr_frame_t
   u32 ss;
 } intr_frame_t;
 
+task_t *get_task(pid_t pid);
 task_t *running_task();
 void schedule();
 

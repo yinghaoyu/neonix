@@ -9,7 +9,6 @@
 #include <neonix/interrupt.h>
 #include <neonix/list.h>
 #include <neonix/memory.h>
-#include <neonix/neonix.h>
 #include <neonix/printk.h>
 #include <neonix/string.h>
 #include <neonix/syscall.h>
@@ -40,7 +39,7 @@ static task_t *get_free_task()
   {
     if (task_table[i] == NULL)
     {
-      task_t *task = (task_t *) alloc_kpage(1);  // todo free_kpage
+      task_t *task = (task_t *) alloc_kpage(1);
       memset(task, 0, PAGE_SIZE);
       task->pid = i;
       task_table[i] = task;
@@ -48,6 +47,19 @@ static task_t *get_free_task()
     }
   }
   panic("No more tasks");
+}
+
+// 获得 pid 对应的 task
+task_t *get_task(pid_t pid)
+{
+  for (size_t i = 0; i < TASK_NR; i++)
+  {
+    if (!task_table[i])
+      continue;
+    if (task_table[i]->pid == pid)
+      return task_table[i];
+  }
+  return NULL;
 }
 
 // 获取进程 id
@@ -102,7 +114,6 @@ static task_t *task_search(task_state_t state)
       continue;
     if (current == ptr)
       continue;
-    // linux里用的是CFS，为了简单起见，这里取剩余时间最短的任务和最久未执行的任务
     if (task == NULL || task->ticks < ptr->ticks || ptr->jiffies < task->jiffies)
       task = ptr;
   }
@@ -152,6 +163,8 @@ int task_block(task_t *task, list_t *blist, task_state_t state, int timeout_ms)
   {
     schedule();
   }
+
+  return task->status;
 }
 
 // 解除任务阻塞
@@ -224,6 +237,7 @@ void schedule()
   next->state = TASK_RUNNING;
   if (next == current)
     return;
+
   task_activate(next);
   task_switch(next);
 }
@@ -265,6 +279,7 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
 
   task->pwd = (void *) alloc_kpage(1);
   strcpy(task->pwd, "/");
+
   task->umask = 0022;  // 对应 0755
 
   task->files[STDIN_FILENO] = &file_table[STDIN_FILENO];
@@ -273,6 +288,18 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
   task->files[STDIN_FILENO]->count++;
   task->files[STDOUT_FILENO]->count++;
   task->files[STDERR_FILENO]->count++;
+
+  // 初始化信号
+  task->signal = 0;
+  task->blocked = 0;
+  for (size_t i = 0; i < MAXSIG; i++)
+  {
+    sigaction_t *action = &task->actions[i];
+    action->flags = 0;
+    action->mask = 0;
+    action->handler = SIG_DFL;
+    action->restorer = NULL;
+  }
 
   task->magic = NEONIX_MAGIC;
 
@@ -287,6 +314,7 @@ extern int init_user_thread();
 void task_to_user_mode()
 {
   task_t *task = running_task();
+
   // 创建用户进程虚拟内存位图
   task->vmap = kmalloc(sizeof(bitmap_t));
   void *buf = (void *) alloc_kpage(1);
@@ -324,7 +352,7 @@ void task_to_user_mode()
   iframe->eflags = (0 << 12 | 0b10 | 1 << 9);
   iframe->esp = USER_STACK_TOP;
 
-#ifdef NEONIX_DEBUG
+#ifdef ONIX_DEBUG
   // ROP 技术，直接从中断返回
   // 通过 eip 跳转到 entry 执行
   asm volatile(
@@ -343,7 +371,6 @@ static void task_build_stack(task_t *task)
   u32 addr = (u32) task + PAGE_SIZE;
   addr -= sizeof(intr_frame_t);
   intr_frame_t *iframe = (intr_frame_t *) addr;
-  // 子进程返回0
   iframe->eax = 0;
 
   addr -= sizeof(task_frame_t);
@@ -374,6 +401,7 @@ pid_t task_fork()
 
   child->pid = pid;
   child->ppid = task->pid;
+
   child->ticks = child->priority;
   child->state = TASK_READY;
 
@@ -397,9 +425,7 @@ pid_t task_fork()
   task->ipwd->count++;
   task->iroot->count++;
   if (task->iexec)
-  {
     task->iexec->count++;
-  }
 
   // 文件引用加一
   for (size_t i = 0; i < TASK_FILE_NR; i++)
@@ -412,8 +438,54 @@ pid_t task_fork()
   // 构造 child 内核栈
   task_build_stack(child);  // ROP
   // schedule();
-  // 父进程返回子进程的pid
+
   return child->pid;
+}
+
+// 如果进程是会话首领则向会话中所有进程发送信号 SIGHUP
+static void task_kill_session(task_t *task)
+{
+  if (!task_leader(task))
+    return;
+
+  for (size_t i = 0; i < TASK_NR; i++)
+  {
+    task_t *child = task_table[i];
+    if (!child)
+      continue;
+    if (task == child || task->sid != child->sid)
+      continue;
+    child->signal |= SIGMASK(SIGHUP);
+  }
+}
+
+// 释放 TTY 设备
+static void task_free_tty(task_t *task)
+{
+  if (task_leader(task) && task->tty > 0)
+  {
+    device_t *device = device_get(task->tty);
+    tty_t *tty = (tty_t *) device->ptr;
+    tty->pgid = 0;
+  }
+}
+
+// 子进程退出，通知父进程
+static void task_tell_father(task_t *task)
+{
+  if (!task->ppid)
+    return;
+  for (size_t i = 0; i < TASK_NR; i++)
+  {
+    task_t *parent = task_table[i];
+    if (!parent)
+      continue;
+    if (parent->pid != task->ppid)
+      continue;
+    parent->signal |= SIGMASK(SIGCHLD);
+    return;
+  }
+  panic("No Parent found!!!");
 }
 
 void task_exit(int status)
@@ -426,18 +498,9 @@ void task_exit(int status)
   task->state = TASK_DIED;
   task->status = status;
 
-  if (task_leader(task))
-  {
-    // TODO: kill session
-  }
-
-  // 释放 TTY 设备
-  if (task_leader(task) && task->tty > 0)
-  {
-    device_t *device = device_get(task->tty);
-    tty_t *tty = (tty_t *) device->ptr;
-    tty->pgid = 0;
-  }
+  task_kill_session(task);
+  task_tell_father(task);
+  task_free_tty(task);
 
   timer_remove(task);
 
@@ -471,13 +534,13 @@ void task_exit(int status)
     child->ppid = task->ppid;
   }
   LOGK("task %s 0x%p exit....\n", task->name, task);
-  // idle进程一定不会退出，因此默认调用exit的进程都有父进程号
+
   task_t *parent = task_table[task->ppid];
   if (parent->state == TASK_WAITING && (parent->waitpid == -1 || parent->waitpid == task->pid))
   {
-    // 如果是父进程先调用了waitpid，父进程会被阻塞，那么子进程退出时就要唤醒父进程
     task_unblock(parent, EOK);
   }
+
   schedule();
 }
 
@@ -502,7 +565,6 @@ pid_t task_waitpid(pid_t pid, int32 *status)
 
       if (ptr->state == TASK_DIED)
       {
-        // 子进程调用exit结束，父进程调用waitpid，那么父进程就要回收子进程的资源
         child = ptr;
         task_table[i] = NULL;
         goto rollback;
@@ -512,7 +574,6 @@ pid_t task_waitpid(pid_t pid, int32 *status)
     }
     if (has_child)
     {
-      // 如果父进程先调用了waitpid，子进程还没有调用exit，父进程就进入等待
       task->waitpid = pid;
       task_block(task, NULL, TASK_WAITING, TIMELESS);
       continue;

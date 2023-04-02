@@ -47,6 +47,7 @@ $(BUILD)/lib/libc.o: $(BUILD)/lib/crt.o \
 	$(BUILD)/lib/printf.o \
 	$(BUILD)/lib/assert.o \
 	$(BUILD)/lib/time.o \
+	$(BUILD)/lib/restorer.o \
 
 	ld -m elf_i386 -r $^ -o $@
 
@@ -57,6 +58,7 @@ BUILTIN_APPS := \
 	$(BUILD)/builtin/echo.out \
 	$(BUILD)/builtin/cat.out \
 	$(BUILD)/builtin/ls.out \
+	$(BUILD)/builtin/kill.out \
 	$(BUILD)/builtin/dup.out \
 	$(BUILD)/builtin/err.out \
 	$(BUILD)/builtin/count.out \
@@ -92,6 +94,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
 	$(BUILD)/kernel/serial.o \
+	$(BUILD)/kernel/signal.o \
 	$(BUILD)/kernel/system.o \
 	$(BUILD)/kernel/task.o \
 	$(BUILD)/kernel/thread.o \
@@ -111,6 +114,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/fifo.o \
 	$(BUILD)/lib/list.o \
 	$(BUILD)/lib/printf.o \
+	$(BUILD)/lib/restorer.o \
 	$(BUILD)/lib/stdlib.o \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/syscall.o \
