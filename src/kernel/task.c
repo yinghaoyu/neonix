@@ -466,7 +466,7 @@ void task_exit(int status)
       continue;
     child->ppid = task->ppid;
   }
-  LOGK("task 0x%p exit....\n", task);
+  LOGK("task %s 0x%p exit....\n", task->name, task);
   // idle进程一定不会退出，因此默认调用exit的进程都有父进程号
   task_t *parent = task_table[task->ppid];
   if (parent->state == TASK_WAITING && (parent->waitpid == -1 || parent->waitpid == task->pid))

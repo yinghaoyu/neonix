@@ -45,12 +45,19 @@ $(BUILD)/lib/libc.o: $(BUILD)/lib/crt.o \
 	$(BUILD)/lib/syscall.o \
 	$(BUILD)/lib/printf.o \
 	$(BUILD)/lib/assert.o \
+	$(BUILD)/lib/time.o \
 
 	ld -m elf_i386 -r $^ -o $@
 
+BUILTIN_APPS := \
+	$(BUILD)/builtin/env.out \
+	$(BUILD)/builtin/echo.out \
+	$(BUILD)/builtin/cat.out \
+	$(BUILD)/builtin/ls.out \
+
 $(BUILD)/builtin/%.out: $(BUILD)/builtin/%.o \
 	$(BUILD)/lib/libc.o \
-	
+
 	ld -m elf_i386 -static $^ -o $@ -Ttext 0x1001000
 
 # 注意，这里的文件是有依赖关系的，builtin必须放在最后面链接
