@@ -95,6 +95,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/fs/file.o \
 	$(BUILD)/fs/inode.o \
 	$(BUILD)/fs/namei.o \
+	$(BUILD)/fs/pipe.o \
 	$(BUILD)/fs/stat.o \
 	$(BUILD)/fs/super.o \
 	$(BUILD)/lib/bitmap.o \
