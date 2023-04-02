@@ -42,9 +42,12 @@ static void user_init_thread()
   }
 }
 
+extern void dev_init();
+
 void init_thread()
 {
   char temp[100];  // 保证栈顶有足够的空间
+  dev_init();
   task_to_user_mode(user_init_thread);
 }
 
