@@ -17,8 +17,6 @@
 
 #define LOGK(fmt, args...) DEBUGK(fmt, ##args)
 
-#define NR_TASKS 64
-
 extern u32 volatile jiffies;
 extern u32 jiffy;
 extern bitmap_t kernel_map;
@@ -27,16 +25,16 @@ extern file_t file_table[];
 
 extern void task_switch(task_t *next);
 
-static task_t *task_table[NR_TASKS];  // 任务表
-static list_t block_list;             // 任务默认阻塞链表
-static list_t sleep_list;             // 任务睡眠链表
+task_t *task_table[TASK_NR];  // 任务表
+static list_t block_list;     // 任务默认阻塞链表
+static list_t sleep_list;     // 任务睡眠链表
 
 static task_t *idle_task;
 
 // 从 task_table 里获得一个空闲的任务
 static task_t *get_free_task()
 {
-  for (size_t i = 0; i < NR_TASKS; i++)
+  for (size_t i = 0; i < TASK_NR; i++)
   {
     if (task_table[i] == NULL)
     {
@@ -92,7 +90,7 @@ static task_t *task_search(task_state_t state)
   task_t *task = NULL;
   task_t *current = running_task();
 
-  for (size_t i = 0; i < NR_TASKS; i++)
+  for (size_t i = 0; i < TASK_NR; i++)
   {
     task_t *ptr = task_table[i];
     if (ptr == NULL)
@@ -118,6 +116,11 @@ static task_t *task_search(task_state_t state)
 void task_yield()
 {
   schedule();
+}
+
+bool _inline task_leader(task_t *task)
+{
+  return task->sid == task->pid;
 }
 
 // 任务阻塞
@@ -246,6 +249,8 @@ static task_t *task_create(target_t target, const char *name, u32 priority, u32 
   task->state = TASK_READY;
   task->uid = uid;
   task->gid = 0;  // TODO: group
+  task->pgid = 0;
+  task->sid = 0;
   task->vmap = &kernel_map;
   task->pde = KERNEL_PAGE_DIR;  // page directory entry
   task->brk = USER_EXEC_ADDR;
@@ -419,6 +424,11 @@ void task_exit(int status)
   task->state = TASK_DIED;
   task->status = status;
 
+  if (task_leader(task))
+  {
+    // TODO: kill session
+  }
+
   timer_remove(task);
 
   free_pde();
@@ -441,7 +451,7 @@ void task_exit(int status)
   }
 
   // 将子进程的父进程赋值为自己的父进程
-  for (size_t i = 2; i < NR_TASKS; i++)
+  for (size_t i = 2; i < TASK_NR; i++)
   {
     task_t *child = task_table[i];
     if (!child)
@@ -469,7 +479,7 @@ pid_t task_waitpid(pid_t pid, int32 *status)
   while (true)
   {
     bool has_child = false;
-    for (size_t i = 2; i < NR_TASKS; i++)
+    for (size_t i = 2; i < TASK_NR; i++)
     {
       task_t *ptr = task_table[i];
       if (!ptr)

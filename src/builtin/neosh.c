@@ -254,7 +254,7 @@ rollback:
   return EOF;
 }
 
-pid_t builtin_command(char *filename, char *argv[], fd_t infd, fd_t outfd, fd_t errfd)
+pid_t builtin_command(char *filename, char *argv[], fd_t infd, fd_t outfd, fd_t errfd, pid_t *pgid)
 {
   int status;
 
@@ -273,6 +273,10 @@ pid_t builtin_command(char *filename, char *argv[], fd_t infd, fd_t outfd, fd_t 
     {
       close(errfd);
     }
+    if (*pgid == 0)
+    {
+      *pgid = pid;
+    }
     return pid;
   }
   if (infd != EOF)
@@ -290,6 +294,9 @@ pid_t builtin_command(char *filename, char *argv[], fd_t infd, fd_t outfd, fd_t 
     fd_t fd = dup2(errfd, STDERR_FILENO);
     close(errfd);
   }
+
+  // 设置进程组 pgid
+  setpgid(0, *pgid);
 
   int i = execve(filename, argv, envp);
   exit(i);
@@ -310,6 +317,7 @@ void builtin_exec(int argc, char *argv[])
   fd_t infd = dupfd[0];
   fd_t pipefd[2];
   int count = 0;
+  pid_t pgid = 0;
 
   for (int i = 0; i < argc; i++)
   {
@@ -321,7 +329,7 @@ void builtin_exec(int argc, char *argv[])
     {
       argv[i] = NULL;
       int ret = pipe(pipefd);
-      builtin_command(name, bargv, infd, pipefd[1], EOF);
+      builtin_command(name, bargv, infd, pipefd[1], EOF, &pgid);
       count++;
       infd = pipefd[0];
       int len = strlen(name) + 1;
@@ -345,7 +353,7 @@ void builtin_exec(int argc, char *argv[])
     p = false;
   }
 
-  int pid = builtin_command(name, bargv, infd, dupfd[1], dupfd[2]);
+  int pid = builtin_command(name, bargv, infd, dupfd[1], dupfd[2], &pgid);
   for (size_t i = 0; i <= count; i++)
   {
     pid_t child = waitpid(-1, &status);
@@ -513,9 +521,11 @@ static int cmd_parse(char *cmd, char *argv[])
 
 int main()
 {
+  setsid();
   memset(cmd, 0, sizeof(cmd));
   memset(cwd, 0, sizeof(cwd));
 
+  clear();
   // builtin_logo();
 
   while (true)
