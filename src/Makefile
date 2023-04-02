@@ -64,6 +64,7 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/kernel/ramdisk.o \
 	$(BUILD)/kernel/rtc.o \
 	$(BUILD)/kernel/schedule.o \
+	$(BUILD)/kernel/serial.o \
 	$(BUILD)/kernel/system.o \
 	$(BUILD)/kernel/task.o \
 	$(BUILD)/kernel/thread.o \
