@@ -50,6 +50,7 @@ $(BUILD)/lib/libc.o: $(BUILD)/lib/crt.o \
 	ld -m elf_i386 -r $^ -o $@
 
 BUILTIN_APPS := \
+	$(BUILD)/builtin/init.out \
 	$(BUILD)/builtin/neosh.out \
 	$(BUILD)/builtin/env.out \
 	$(BUILD)/builtin/echo.out \
