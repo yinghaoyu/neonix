@@ -254,6 +254,15 @@ void builtin_umount(int argc, char *argv[])
   umount(argv[1]);
 }
 
+void builtin_mkfs(int argc, char *argv[])
+{
+  if (argc < 2)
+  {
+    return;
+  }
+  mkfs(argv[1], 0);
+}
+
 static void execute(int argc, char *argv[])
 {
   char *line = argv[0];
@@ -317,6 +326,10 @@ static void execute(int argc, char *argv[])
   if (!strcmp(line, "umount"))
   {
     return builtin_umount(argc, argv);
+  }
+  if (!strcmp(line, "mkfs"))
+  {
+    return builtin_mkfs(argc, argv);
   }
   printf("osh: command not found: %s\n", argv[0]);
 }
