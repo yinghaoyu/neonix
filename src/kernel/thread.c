@@ -37,7 +37,9 @@ static void user_init_thread()
     }
     else
     {
-      osh_main();
+      int err = execve("/bin/neosh.out", NULL, NULL);
+      printf("execve /bin/neosh.out error %d\n", err);
+      exit(err);
     }
   }
 }

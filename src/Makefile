@@ -2,13 +2,13 @@ BUILD:=../build
 SRC:=.
 
 MULTIBOOT2:=0x10000
-ENTRYPOINT:=0x10040 # MULTIBOOT2头必须以64字节对齐
+ENTRYPOINT:=$(shell python -c "print(f'0x{$(MULTIBOOT2) + 64:x}')") # MULTIBOOT2头必须以64字节对齐
 
 CFLAGS:= -m32 # 32位程序
 CFLAGS+= -fno-builtin # 不需要gcc内置函数,例如内置的memcpy
 CFLAGS+= -nostdinc    # 不需要标准头文件,只能用自己的函数
-CFLAGS+= -fno-pic     # 不需要无关的代码position independent code
-CFLAGS+= -fno-pie     # position independent executable
+CFLAGS+= -fno-pic     # 不需要位置无关的代码 position independent code
+CFLAGS+= -fno-pie     # 不需要位置无关的可执行程序 position independent executable
 CFLAGS+= -nostdlib     # 不需要标准库
 CFLAGS+= -fno-stack-protector # 不需要栈保护
 CFLAGS+= -DNEONIX # 定义 NEONIX
@@ -50,6 +50,7 @@ $(BUILD)/lib/libc.o: $(BUILD)/lib/crt.o \
 	ld -m elf_i386 -r $^ -o $@
 
 BUILTIN_APPS := \
+	$(BUILD)/builtin/neosh.out \
 	$(BUILD)/builtin/env.out \
 	$(BUILD)/builtin/echo.out \
 	$(BUILD)/builtin/cat.out \
@@ -107,7 +108,6 @@ $(BUILD)/kernel.bin: \
 	$(BUILD)/lib/string.o \
 	$(BUILD)/lib/syscall.o \
 	$(BUILD)/lib/vsprintf.o \
-	$(BUILD)/builtin/neosh.o \
 	
 	$(shell mkdir -p $(dir $@))
 	ld ${LDFLAGS} $^ -o $@
