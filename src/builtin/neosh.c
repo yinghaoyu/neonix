@@ -357,7 +357,7 @@ void builtin_exec(int argc, char *argv[])
     sprintf(name, "/bin/%s.out", argv[i]);
     if (stat(name, &statbuf) == EOF)
     {
-      printf("osh: command not found: %s\n", argv[i]);
+      printf("neosh: command not found: %s\n", argv[i]);
       return;
     }
     bargv = &argv[i + 1];
@@ -375,7 +375,7 @@ void builtin_exec(int argc, char *argv[])
     // printf("child %d exit\n", child);
   }
 
-  // 设置 TTY 进程组为 osh
+  // 设置 TTY 进程组为 neosh
   ioctl(STDIN_FILENO, TIOCSPGRP, getpid());
 }
 

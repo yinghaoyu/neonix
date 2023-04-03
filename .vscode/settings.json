@@ -17,6 +17,7 @@
     "stdlib.h": "c",
     "stdio.h": "c",
     "timer.h": "c",
-    "errno.h": "c"
+    "errno.h": "c",
+    "fs.h": "c"
   }
 }

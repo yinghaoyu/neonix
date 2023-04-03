@@ -48,6 +48,8 @@ void file_init()
   }
 }
 
+extern inode_t *inode_open();
+
 fd_t sys_open(char *filename, int flags, int mode)
 {
   inode_t *inode = inode_open(filename, flags, mode);
